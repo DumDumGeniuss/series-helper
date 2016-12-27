@@ -1,20 +1,26 @@
 .box {
 	display: block;
-	margin-left: 50px;
 }
 
 .titleContainer {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
+	background-color: #eeeeee;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 5px;
+	border-radius: 5px;
 	.title {
-		font-size: 25px;
+		font-size: 3em;
 		display: inline-block;
 		padding: 10px 0px;
+		// min-width: 60%;
+		text-align: center;
 	}
 	
 	.light {
 		display: inline-block;
-		margin-left: 5px;
+		margin: 0px 5px;
 		padding: 5px;
 		border-radius: 5px;
 		color: white;
@@ -34,8 +40,8 @@
 	}
 
 	.functionIcon {
-		font-size: 25px;
-		color: #aaaaaa;
+		font-size: 3em;
+		color: #777777;
 		cursor: pointer;
 		:hover {
 			color: #ff4444;
@@ -44,20 +50,26 @@
 }
 
 
-
-.leftBox {
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-
-	.minusItemIcon {
-		font-size: 20px;
-		color: green;
-		cursor: pointer;
+.content {
+	.leftBox {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+	
+		.minusItemIcon {
+			font-size: 2.5em;
+			color: green;
+			cursor: pointer;
+		}
+		.addItemIcon {
+			font-size: 2.5em;
+			color: red;
+			cursor: pointer;
+		}
 	}
-	.addItemIcon {
-		font-size: 20px;
-		color: red;
-		cursor: pointer;
+	.childContainer {
+		margin-bottom: 10px;
+		margin-left: 50px;
 	}
 }
+

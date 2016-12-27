@@ -1,0 +1,69 @@
+.modalContainer {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.8);
+
+	.background {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+	}
+
+	.contentBox {
+		display: inline-block;
+		position: absolute;
+		z-index: 2;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		background-image: linear-gradient(#ff9497, #ff7676);
+		border: 2px solid #ff6e82;
+		border-radius: 10px;
+		padding: 20px;
+
+		.title {
+			text-align: center;
+			color: white;
+		}
+
+		.functionBar {
+			padding: 10px 0px;
+			display: flex;
+			justify-content: center;
+
+			span {
+				padding: 10px;
+				background-image: linear-gradient(#03A9F4, #1f779e);
+				border-radius: 10px;
+				color: white;
+				margin: 5px;
+				cursor: pointer;
+			}
+		}
+
+		.inputBox {
+			display: flex;
+			justify-content: center;
+			align-items:center;
+			padding: 5px 0px;
+
+			label {
+				width: 70px;
+				text-align: center;
+				color: white;
+			}
+
+			input {
+				border-radius: 5px;
+				width: 200px;
+				font-size: 3.75em;
+			}
+		}
+	}
+}

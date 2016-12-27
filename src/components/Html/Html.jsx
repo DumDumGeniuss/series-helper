@@ -4,6 +4,7 @@ import serialize from 'serialize-javascript';
 const css = `
 	body {
 		margin: 0px;
+		font-size: 50%;
 	}
 	* {
 		box-sizing: border-box;
@@ -14,6 +15,12 @@ const css = `
 		cursor: none;
 	}
 		a:hover {
+	}
+
+	@media screen and (max-width: 500px) {
+		body {
+			font-size: 25%;
+		}
 	}
 `;
 

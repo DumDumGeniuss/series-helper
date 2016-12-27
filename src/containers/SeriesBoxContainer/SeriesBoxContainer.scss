@@ -1,8 +1,47 @@
-.itemBoxContainer {
+.itemsBoxContainer {
 	display: flex;
+	flex-direction:column;
 	justify-content: center;
-	align-items:center;
+	align-items: center;
 	margin: 10px;
+	padding: 10px 0px;
 	border: 3px solid #024e80;
 	border-radius: 15px;
+}
+
+.itemsContainer {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction:column;
+	margin-top: 10px;
+}
+
+.itemsArea {
+	margin: 0px 0px 15px 0px;
+}
+
+.functionBar {
+	width: 100%;
+	display:flex;
+	justify-content: center;
+	align-items:center;
+
+	.mainFuncIcon {
+		padding: 10px;
+		margin: 5px;
+		color: white;
+		font-size: 2em;
+		border-radius: 15px;
+		cursor: pointer;
+		:hover {
+		}
+	}
+
+	.redGradient {
+		background-image: linear-gradient(#ff9497, #f15252);
+	}
+
+	.greenGradient {
+		background-image: linear-gradient(#aef162, #4CAF50);
+	}
 }
