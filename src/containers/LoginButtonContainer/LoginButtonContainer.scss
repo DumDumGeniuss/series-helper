@@ -1,0 +1,18 @@
+.loginButtonContainer {
+	display: flex;
+	align-items: center;
+	margin-left: 10px;
+	cursor: pointer;
+	color: white;
+	font: 2.5em "Helvetica Neue",Arial,Helvetica,sans-serif;
+
+	svg {
+		vertical-align: middle;
+		font-size: 35px;
+		margin-left: 5px;
+	}
+}
+
+.loginButtonContainer:hover {
+	color: yellow;
+}

@@ -1,1 +1,2 @@
-export const ADD_USER = 'ADD_USER';
+export const SET_MY_PROFILE = 'SET_MY_PROFILE';
+export const CLEAR_MY_PROFILE = 'CLEAR_MY_PROFILE';

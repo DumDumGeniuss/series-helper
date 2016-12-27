@@ -1,0 +1,26 @@
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: fixed;
+	width: 100%;
+	height: 40px;
+	left: 0;
+	top: 0;
+	background-color: #024e80;
+
+	.webTitle {
+		color: white;
+		font: 2.5em "Helvetica Neue",Arial,Helvetica,sans-serif;
+		align-self: center;
+		margin: 0px 10px;
+	}
+	.functionBox {
+		margin: 0px 10px;
+	}
+}
+
+.content {
+	margin-top: 40px;
+	padding: 10px 0px;
+}

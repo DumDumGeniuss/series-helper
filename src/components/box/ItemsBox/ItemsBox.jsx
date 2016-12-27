@@ -12,9 +12,9 @@ class ItemsBox extends React.Component {
 			children: React.PropTypes.array,
 			prewords: React.PropTypes.string,
 			order: React.PropTypes.number,
-			updateStatusFunc: React.PropTypes.function,
-			addItemFunc: React.PropTypes.function,
-			deleteItemFunc: React.PropTypes.function,
+			updateStatusFunc: React.PropTypes.func,
+			addItemFunc: React.PropTypes.func,
+			deleteItemFunc: React.PropTypes.func,
 		}
 	}
 	constructor(props) {

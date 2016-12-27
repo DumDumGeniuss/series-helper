@@ -3,10 +3,10 @@ import React from 'react';
 class SeriesModal extends React.Component {
 	static get propTypes() {
 		return {
-			switchShowFunc: React.PropTypes.function,
-			changeSeriesFunc: React.PropTypes.function,
-			showModal: React.PropTypes.boolean,
-			title: React.PropTypes.title,
+			switchShowFunc: React.PropTypes.func,
+			changeSeriesFunc: React.PropTypes.func,
+			showModal: React.PropTypes.bool,
+			title: React.PropTypes.string,
 		}
 	}
 	constructor(props) {
