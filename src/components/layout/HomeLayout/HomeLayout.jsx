@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router'
 import LoginButtonContainer from '../../../containers/LoginButtonContainer/LoginButtonContainer.jsx';
 
 class HomeLayout extends React.Component {
@@ -27,9 +28,11 @@ class HomeLayout extends React.Component {
 		return (
 			<div>
 				<div className={style.header}>
-					<span className={style.webTitle}>
-						<b>Series Helper</b>
-					</span>
+					<Link to={'/'} className={style.webTitle}>
+						<span>
+							<b>Series Helper</b>
+						</span>
+					</Link>
 					<div className={style.functionBox}>
 						<LoginButtonContainer />
 					</div>

@@ -4,6 +4,7 @@ import PlusSquare from 'react-icons/lib/fa/plus-square';
 import Minus from 'react-icons/lib/fa/minus';
 import Plus from 'react-icons/lib/fa/plus';
 import Film from 'react-icons/lib/fa/film';
+import Edit from 'react-icons/lib/fa/edit';
 
 class ItemsBox extends React.Component {
 	static get propTypes() {
@@ -30,7 +31,7 @@ class ItemsBox extends React.Component {
 	}
 	render () {
 		const style = require('./ItemsBox.scss');
-		const { item, children, prewords, order, updateStatusFunc, addItemFunc, deleteItemFunc } = this.props;
+		const { item, children, prewords, order, updateStatusFunc, addItemFunc, deleteItemFunc, displayStyle, childNumber, childNumberPrewords } = this.props;
 		const { showChild } = this.state;
 		const title = item.title?item.title:(prewords + (order+1));
 		const link = item.link?item.link:null;
@@ -52,12 +53,14 @@ class ItemsBox extends React.Component {
 			break;
 		}
 		return (
-			<div className={style.box}>
+			<div style={ {display: displayStyle} } className={style.box}>
 				<div className={style.titleContainer}>
 					<span className={style.title}>{title}</span>
-					<div>
+					<div className={style.rightItems}>
+						<span className={style.number}><b>{childNumberPrewords}{childNumber}</b></span>
 						<div className={style.light + ' ' + signalColor} onClick={updateStatusFunc}>{signalWord}</div>
 						<div style={ {'display': children?'initial':'none'} }>
+							<Edit className={style.functionIcon} />
 							<a style={ {'display': link?'initial':'none'} } href={link}>
 								<Film className={style.functionIcon} />
 							</a>

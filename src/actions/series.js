@@ -1,4 +1,5 @@
 import * as seriesConstant from '../constants/series.js';
+import * as seriesApi from '../apis/series.js';
 
 const testItemsBox = [
 	{
@@ -37,25 +38,37 @@ const testItemsBox = [
 	},
 ];
 
-export function updateSeriesOptimistic(items) {
+export function updateSeriesOptimistic(series) {
 	return {
 		type: seriesConstant.UPDATE_SERIES,
-		items: items,
+		series: series,
 	};
 }
 
-export function updateSeries(items) {
-	return updateSeriesOptimistic(items);
+export function updateSeries(series) {
+	series.items = JSON.stringify(series.items);
+	return dispatch => {
+		seriesApi.updateSeries(series)
+			.then((res) => {
+				res.items = JSON.parse(res.items);
+				dispatch(updateSeriesOptimistic(res));
+			});
+	};
 }
 
-export function querySeriesOptimistic(items, userId) {
+export function querySeriesOptimistic(series) {
 	return {
 		type: seriesConstant.QUERY_SERIES,
-		items: items,
-		userId: userId,
+		series: series
 	};
 }
 
 export function querySeries(userId) {
-	return querySeriesOptimistic(testItemsBox, userId);
+	return dispatch => {
+		seriesApi.getSeries(userId)
+			.then((res) => {
+				res.items = JSON.parse(res.items);
+				dispatch(querySeriesOptimistic(res));
+			});
+	}
 }

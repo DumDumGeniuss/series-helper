@@ -7,39 +7,42 @@ class SeriesModal extends React.Component {
 			changeSeriesFunc: React.PropTypes.func,
 			showModal: React.PropTypes.bool,
 			title: React.PropTypes.string,
+			params: React.PropTypes.array,
 		}
 	}
 	constructor(props) {
 		super(props);
 		this.state = {
-			series: {
-				name: '請輸入名稱',
-				link: '請輸入片源',
-			}
+			series: {}
 		};
 	}
-	handleNameChange(e) {
+	componentDidMount() {
+		const { params } = this.props;
 		let series = this.state.series;
-		series.name = e.target.value;
+		for(let i = 0; i < params.length; i++) {
+			series[params[i]] = params[i];
+		}
     	this.setState({
             series: series,
     	});
 	}
-	handleLinkChange(e) {
+	handleParamChange(e, param) {
 		let series = this.state.series;
-		series.link = e.target.value;
+		series[param] = e.target.value;
     	this.setState({
             series: series,
     	});
 	}
-	submit(series, changeSeriesFunc, switchShowFunc) {
-		changeSeriesFunc(series);
+	submit(series, submitFunc, switchShowFunc) {
+		console.log(series);
+		submitFunc(series);
 		switchShowFunc();
 	}
 	render () {
 		const style = require('./SeriesModal.scss');
-		const { switchShowFunc, changeSeriesFunc, showModal, title } = this.props;
+		const { switchShowFunc, submitFunc, showModal, title, params } = this.props;
 		const { series } = this.state;
+		console.log(params);
 		return (
 			<div style={ {'display': showModal?'initial':'none'} }className={style.modalContainer}>
 				<div className={style.background} onClick={switchShowFunc}></div>
@@ -48,17 +51,19 @@ class SeriesModal extends React.Component {
 						<b>{title}</b>
 					</h1>
 					<form>
-						<div className={style.inputBox}>
-							<label>Name</label>
-							<input defaultValue={series.name} onChange={this.handleNameChange.bind(this)}/>
-						</div>
-						<div className={style.inputBox}>
-							<label>Link</label>
-							<input defaultValue={series.link} onChange={this.handleLinkChange.bind(this)}/>
-						</div>
+						{
+							params.map( (item, index) => {
+								return (
+									<div key={index} className={style.inputBox}>
+										<label>item</label>
+										<input defaultValue={item} onChange={this.handleParamChange.bind(this, event, item)}/>
+									</div>			
+								);
+							})
+						}
 					</form>
 					<div className={style.functionBar}>
-						<span onClick={this.submit.bind(this, series, changeSeriesFunc, switchShowFunc)}>Confirm</span>
+						<span onClick={this.submit.bind(this, series, submitFunc, switchShowFunc)}>Confirm</span>
 						<span onClick={switchShowFunc}>Cancel</span>
 					</div>
 				</div>

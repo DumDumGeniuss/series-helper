@@ -16,12 +16,20 @@ class SeriesBoxContainer extends React.Component {
 	}
 	componentDidMount() {
 		const { actions } = this.props;
-		actions.querySeries();
+		const { user } = this.props.state;
+		if(user.myProfile) {
+			actions.querySeries(user.myProfile._id);
+		}
 	}
 	switchShowSeriesModal() {
 		this.setState({
 			showSeriesModal: !this.state.showSeriesModal,
 		})
+	}
+	resetSeries () {
+		const { actions } = this.props;
+		const { user } = this.props.state;
+		actions.querySeries(user.myProfile._id);
 	}
 	addSeries(newSeries) {
 		const { actions } = this.props;
@@ -30,113 +38,146 @@ class SeriesBoxContainer extends React.Component {
 			title: newSeries.name,
 			link: newSeries.link,
 			status: 0,
-			items: [],
+			items: [{
+				status: 2,
+				items: [{
+					status: 2
+				}]
+			}]
 		});
-		actions.updateSeriesOptimistic(series.items);
+		actions.updateSeriesOptimistic(series);
 	}
-	updateSeriesOptimisticStatus(index) {
+	deleteSeries(index) {
+		const { actions } = this.props;
+		const { series } = this.props.state;
+		series.items.splice(index, 1);
+	}
+	saveSeries() {
+		const { actions } = this.props;
+		const { series } = this.props.state;
+		actions.updateSeries(series);
+	}
+	updateSeriesStatus(index) {
 		const { actions } = this.props;
 		const { series } = this.props.state;
 		series.items[index].status = (series.items[index].status + 1) % 3;
-		actions.updateSeriesOptimistic(series.items);
+		actions.updateSeriesOptimistic(series);
 	}
 	updateSeasonStatus(index, seasonIndex) {
 		const { actions } = this.props;
 		const { series } = this.props.state;
 		series.items[index].items[seasonIndex].status = (series.items[index].items[seasonIndex].status + 1) % 3;
-		actions.updateSeriesOptimistic(series.items);
+		actions.updateSeriesOptimistic(series);
 	}
 	updateEpStatus(index, seasonIndex, epIndex) {
 		const { actions } = this.props;
 		const { series } = this.props.state;
 		series.items[index].items[seasonIndex].items[epIndex].status = (series.items[index].items[seasonIndex].items[epIndex].status + 1) % 3;
-		actions.updateSeriesOptimistic(series.items);
+		actions.updateSeriesOptimistic(series);
 	}
 	addSeason(index) {
 		const { actions } = this.props;
 		const { series } = this.props.state;
 		series.items[index].items.push({
-			status: 0,
-			items: [],
+			status: 2,
+			items: [{
+				status: 2
+			}]
 		});
 		console.log(series);
-		actions.updateSeriesOptimistic(series.items);
+		actions.updateSeriesOptimistic(series);
 	}
 	addEp(index, seasonIndex) {
 		const { actions } = this.props;
 		const { series } = this.props.state;
 		series.items[index].items[seasonIndex].items.push({
-			status: 0,
+			status: 2
 		});
-		actions.updateSeriesOptimistic(series.items);
+		actions.updateSeriesOptimistic(series);
 	}
 	deleteSeason(index) {
 		const { actions } = this.props;
 		const { series } = this.props.state;
+		if (series.items[index].items.length === 1) {
+			return;
+		}
 		series.items[index].items.splice(series.items[index].items.length - 1, 1);
-		actions.updateSeriesOptimistic(series.items);
+		actions.updateSeriesOptimistic(series);
 	}
 	deleteEp(index, seasonIndex) {
 		const { actions } = this.props;
 		const { series } = this.props.state;
+		if (series.items[index].items[seasonIndex].items.length === 1) {
+			return;
+		}
 		series.items[index].items[seasonIndex].items.splice(series.items[index].items[seasonIndex].items.length - 1, 1);
-		actions.updateSeriesOptimistic(series.items);
+		actions.updateSeriesOptimistic(series);
 	}
 	render () {
 		const self = this;
-		const { series } = self.props.state;
+		const { series, user } = self.props.state;
 		const { showSeriesModal } = self.state;
 		const style = require('./SeriesBoxContainer.scss');
 		return (
-			<div className={style.itemsBoxContainer}>
-				<div className={style.functionBar}>
+			<div className={style.seriesBoxContainer}>
+				<div style={ {'display': user.myProfile?'flex':'none'} } className={style.functionBar}>
 					<span className={style.mainFuncIcon + ' ' + style.redGradient} onClick={self.switchShowSeriesModal.bind(self)}>
 						<b>Add</b>
 					</span>
-					<span className={style.mainFuncIcon + ' ' + style.greenGradient}>
+					<span className={style.mainFuncIcon + ' ' + style.orangeGradient} onClick={self.saveSeries.bind(self)}>
 						<b>Save</b>
+					</span>
+					<span className={style.mainFuncIcon + ' ' + style.greenGradient} onClick={self.resetSeries.bind(self)}>
+						<b>Reset</b>
 					</span>
 					<SeriesModal
 						showModal={showSeriesModal}
 						switchShowFunc={self.switchShowSeriesModal.bind(self)}
-						changeSeriesFunc={self.addSeries.bind(self)}
+						submitFunc={self.addSeries.bind(self)}
 						title={'Create New Series'}
+						params={['name', 'link']}
 					/>
 				</div>
-				<div className={style.itemsContainer}>
+				<div style={ {'display': user.myProfile?'flex':'none'} } className={style.seriesBox}>
 					{
-						series.items.map( (item, index) => {
+						series.items.map( (seriesItem, index) => {
 							return (
-								<div className={style.itemsArea}>
+								<div key={seriesItem.createDate} className={style.itemsArea}>
 									<ItemsBox
-										key={index}
-										item={item}
+										item={seriesItem}
 										prewords={null}
-										updateStatusFunc={self.updateSeriesOptimisticStatus.bind(self, index)}
+										childNumberPrewords={'S'}
+										childNumber={seriesItem.items.length}
+										updateStatusFunc={self.updateSeriesStatus.bind(self, index)}
 										addItemFunc={self.addSeason.bind(self, index)}
 										deleteItemFunc={self.deleteSeason.bind(self, index)}
+										displayStyle={'block'}
 									>
 										{
-											item.items.map( (item, seasonIndex) => {
+											seriesItem.items.map( (seasonItem, seasonIndex) => {
 												return (
 													<ItemsBox
 														key={seasonIndex}
-														item={item}
+														item={seasonItem}
 														prewords={'Season'}
+														childNumberPrewords={'EP'}
+														childNumber={seasonItem.items.length}
 														order={seasonIndex}
 														updateStatusFunc={self.updateSeasonStatus.bind(self, index, seasonIndex)}
 														addItemFunc={self.addEp.bind(self, index, seasonIndex)}
 														deleteItemFunc={self.deleteEp.bind(self, index, seasonIndex)}
+														displayStyle={'block'}
 													>
 														{
-															item.items.map( (item, epIndex) => {
+															seasonItem.items.map( (epItem, epIndex) => {
 																return (
 																	<ItemsBox
 																		key={epIndex}
-																		item={item}
-																		prewords={'EP'}
+																		item={epItem}
+																		prewords={''}
 																		order={epIndex}
 																		updateStatusFunc={self.updateEpStatus.bind(self, index, seasonIndex, epIndex)}
+																		displayStyle={'inline-flex'}
 																	/>
 																)
 															})

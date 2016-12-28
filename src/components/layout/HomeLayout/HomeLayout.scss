@@ -10,10 +10,13 @@
 	background-color: #024e80;
 
 	.webTitle {
-		color: white;
-		font: 2.5em "Helvetica Neue",Arial,Helvetica,sans-serif;
-		align-self: center;
-		margin: 0px 10px;
+		cursor: pointer;
+		span {
+			color: white;
+			font: 2.5em "Helvetica Neue",Arial,Helvetica,sans-serif;
+			align-self: center;
+			margin: 0px 10px;
+		}
 	}
 	.functionBox {
 		margin: 0px 10px;

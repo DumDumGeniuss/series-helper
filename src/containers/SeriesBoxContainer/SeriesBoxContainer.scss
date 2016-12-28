@@ -1,4 +1,4 @@
-.itemsBoxContainer {
+.seriesBoxContainer {
 	display: flex;
 	flex-direction:column;
 	justify-content: center;
@@ -9,11 +9,12 @@
 	border-radius: 15px;
 }
 
-.itemsContainer {
+.seriesBox {
 	display: flex;
 	justify-content: flex-start;
 	flex-direction:column;
 	margin-top: 10px;
+	width: 80%;
 }
 
 .itemsArea {
@@ -39,6 +40,10 @@
 
 	.redGradient {
 		background-image: linear-gradient(#ff9497, #f15252);
+	}
+
+	.orangeGradient {
+		background-image: linear-gradient(#ffd145, #FF9800);
 	}
 
 	.greenGradient {

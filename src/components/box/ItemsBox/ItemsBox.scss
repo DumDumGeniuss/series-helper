@@ -1,5 +1,4 @@
 .box {
-	display: block;
 }
 
 .titleContainer {
@@ -8,43 +7,61 @@
 	justify-content: space-between;
 	background-color: #eeeeee;
 	margin: 0px 0px 0px 0px;
-	padding: 0px 5px;
+	padding: 5px 5px;
 	border-radius: 5px;
+
 	.title {
-		font-size: 3em;
+		font-size: 2.5em;
 		display: inline-block;
 		padding: 10px 0px;
-		// min-width: 60%;
+		max-width: 250px;
 		text-align: center;
+		word-break: break-all;
 	}
+
+	.rightItems {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		.number {
+			display: inline-block;
+			margin: 0px 5px;
+			padding: 5px;
+			border-radius: 5px;
+			font-size: 2em;
+			color: #777777;
+		}
+		
+		.light {
+			display: inline-block;
+			margin: 0px 5px;
+			padding: 5px;
+			border-radius: 5px;
+			color: white;
+			cursor: pointer;
+		}
 	
-	.light {
-		display: inline-block;
-		margin: 0px 5px;
-		padding: 5px;
-		border-radius: 5px;
-		color: white;
-		cursor: pointer;
-	}
-
-	.red {
-		background-image: linear-gradient(#ff548e, #de0519)
-	}
-
-	.orange {
-		background-image: linear-gradient(#ffd149, #dc930d);
-	}
-
-	.green {
-		background-image: linear-gradient(#8bc34a, #009688);
-	}
-
-	.functionIcon {
-		font-size: 3em;
-		color: #777777;
-		cursor: pointer;
-		:hover {
-			color: #ff4444;
+		.red {
+			background-image: linear-gradient(#ff548e, #de0519)
+		}
+	
+		.orange {
+			background-image: linear-gradient(#ffd149, #dc930d);
+		}
+	
+		.green {
+			background-image: linear-gradient(#8bc34a, #009688);
+		}
+	
+		.functionIcon {
+			font-size: 3em;
+			color: #777777;
+			cursor: pointer;
+			margin: 0px 1px;
+			:hover {
+				color: #ff4444;
+			}
 		}
 	}
 }

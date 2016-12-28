@@ -2,15 +2,16 @@ import * as seriesConstant from '../constants/series.js';
 
 const initState = {
 	items: [],
-	userId: '',
+	_id: '',
+	public: false,
 };
 
 export default function series(state = initState, action) {
 	switch (action.type) {
 	case seriesConstant.QUERY_SERIES:
-		return Object.assign({}, state, {userId: action.userId, items: action.items});
+		return Object.assign({}, state, action.series);
 	case seriesConstant.UPDATE_SERIES:
-		return Object.assign({}, state, {items: action.items});
+		return Object.assign({}, state, action.series);
 	default:
 		return state;
 	}

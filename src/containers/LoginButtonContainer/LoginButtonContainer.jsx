@@ -23,9 +23,11 @@ class LoginButtonContainer extends React.Component {
 		FB.login(function(response) {
 			if (response.status === 'connected') {
 				FB.api('/me', (response) => {
-					response.provider = 'facebook';
-					response._id = response.id;
-					actions.setMyProfile(response);
+					actions.setMyProfile({
+						email: response.email,
+						provider: 'facebook',
+						_id: response.id
+					});
 				});
 			} else if (response.status === 'not_authorized') {
 				alert('Log in with facebook failed');
@@ -43,7 +45,6 @@ class LoginButtonContainer extends React.Component {
 	render () {
 		const style = require('./LoginButtonContainer.scss');
 		const { user } = this.props.state;
-		console.log(user);
 		return (
 			<div>
 				<div style={ {'display': user.myProfile?'none':'initial'} } className={style.loginButtonContainer} onClick={this.login.bind(this)}>
