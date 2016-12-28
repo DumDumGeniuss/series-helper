@@ -2,7 +2,10 @@ var path = require('path');
 var webpack = require('webpack');
 var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 var webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
- 
+var dotenv = require('dotenv');
+
+dotenv.config();
+
 var config = {
 	devtool: 'cheap-module-source-map',
 	context: path.join(__dirname, '..'),
@@ -49,6 +52,8 @@ var config = {
 		new webpack.NoErrorsPlugin(),
 		new webpack.DefinePlugin({
 			'process.env.NODE_ENV': JSON.stringify('development'),
+			'process.env.API': JSON.stringify(process.env.API),
+			'process.env.FACEBOOK_API_ID': JSON.stringify(process.env.FACEBOOK_API_ID),
 		}),
 		webpackIsomorphicToolsPlugin.development(),
 	]

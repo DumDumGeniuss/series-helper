@@ -177,7 +177,7 @@ class SeriesBoxContainer extends React.Component {
 		const { series, user } = self.props.state;
 		const { showInputModals, editSeriesParams, editSeasonParams } = self.state;
 		const style = require('./SeriesBoxContainer.scss');
-		console.log(editSeriesParams.item);
+		
 		return (
 			<div className={style.seriesBoxContainer}>
 				<InputModal

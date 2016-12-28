@@ -2,7 +2,7 @@ require('es6-promise').polyfill();
 import fetch from 'isomorphic-fetch';
 
 export const getSeries = (_id) => {
-	return fetch('http://localhost:9000/series/' + _id)
+	return fetch(process.env.API + '/series/' + _id)
 		.then((res) => {
 			return res.json();
 		})
@@ -12,7 +12,7 @@ export const getSeries = (_id) => {
 };
 
 export const updateSeries = (series) => {
-	return fetch('http://localhost:9000/series/' + series._id, {
+	return fetch(process.env.API + '/series/' + series._id, {
 		method: 'POST',
 		headers: {
 			'Accept': 'application/json',

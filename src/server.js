@@ -22,7 +22,9 @@ import reducers from './reducers/index.js';
 import routes from './routes/routes.jsx';
 import Html from './components/Html/Html.jsx';
 
-import { port } from './config.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const rootDir = path.resolve(__dirname, '..');
 
@@ -100,8 +102,8 @@ app.use((req, res) => {
 	handleReactRender(req, res, initState, global.webpackIsomorphicTools.assets());
 });
 
-app.listen(port, () => {
-	console.log(`app\'s running on port ${port}!`);
+app.listen(process.env.PORT, () => {
+	console.log(`app\'s running on port ${process.env.PORT}!`);
 });
 
 export default app;

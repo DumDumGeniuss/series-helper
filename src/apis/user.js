@@ -2,14 +2,14 @@ require('es6-promise').polyfill();
 import fetch from 'isomorphic-fetch';
 
 export const getUser = (_id) => {
-	fetch('http://localhost:9000/users/' + _id)
+	fetch(process.env.API + '/users/' + _id)
 		.then((res) => {
 			res.json();
 		});
 };
 
 export const addUser = (user) => {
-	return fetch('http://localhost:9000/users', {
+	return fetch(process.env.API + '/users', {
 		method: 'POST',
 		headers: {
 			'Accept': 'application/json',
