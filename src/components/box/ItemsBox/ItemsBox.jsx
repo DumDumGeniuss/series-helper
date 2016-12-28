@@ -15,6 +15,7 @@ class ItemsBox extends React.Component {
 			order: React.PropTypes.number,
 			updateStatusFunc: React.PropTypes.func,
 			addItemFunc: React.PropTypes.func,
+			clickEditFunc: React.PropTypes.func,
 			deleteItemFunc: React.PropTypes.func,
 		}
 	}
@@ -31,7 +32,7 @@ class ItemsBox extends React.Component {
 	}
 	render () {
 		const style = require('./ItemsBox.scss');
-		const { item, children, prewords, order, updateStatusFunc, addItemFunc, deleteItemFunc, displayStyle, childNumber, childNumberPrewords } = this.props;
+		const { item, children, prewords, order, updateStatusFunc, addItemFunc, clickEditFunc, deleteItemFunc, displayStyle, childNumber, childNumberPrewords } = this.props;
 		const { showChild } = this.state;
 		const title = item.title?item.title:(prewords + (order+1));
 		const link = item.link?item.link:null;
@@ -60,8 +61,8 @@ class ItemsBox extends React.Component {
 						<span className={style.number}><b>{childNumberPrewords}{childNumber}</b></span>
 						<div className={style.light + ' ' + signalColor} onClick={updateStatusFunc}>{signalWord}</div>
 						<div style={ {'display': children?'initial':'none'} }>
-							<Edit className={style.functionIcon} />
-							<a style={ {'display': link?'initial':'none'} } href={link}>
+							<Edit onClick={clickEditFunc} className={style.functionIcon} />
+							<a style={ {'display': link?'initial':'none'} } href={link} target={"_blank"}>
 								<Film className={style.functionIcon} />
 							</a>
 							<MinusSquare

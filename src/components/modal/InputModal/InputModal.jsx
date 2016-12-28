@@ -1,6 +1,6 @@
 import React from 'react';
 
-class SeriesModal extends React.Component {
+class InputModal extends React.Component {
 	static get propTypes() {
 		return {
 			switchShowFunc: React.PropTypes.func,
@@ -8,6 +8,7 @@ class SeriesModal extends React.Component {
 			showModal: React.PropTypes.bool,
 			title: React.PropTypes.string,
 			params: React.PropTypes.array,
+			elementId: React.PropTypes.string
 		}
 	}
 	constructor(props) {
@@ -16,33 +17,45 @@ class SeriesModal extends React.Component {
 			series: {}
 		};
 	}
+	componentWillReceiveProps(nextProps) {
+		const { elementId } = this.props;
+		const { params } = nextProps;
+		for(let i = 0; i < params.length; i++) {
+			let input = document.getElementById(elementId + i);
+			input.value = params[i].value;
+		}
+	}
 	componentDidMount() {
 		const { params } = this.props;
 		let series = this.state.series;
 		for(let i = 0; i < params.length; i++) {
-			series[params[i]] = params[i];
+			series[params[i].title] = params[i];
 		}
     	this.setState({
             series: series,
     	});
 	}
-	handleParamChange(e, param) {
+	handleParamChange(params, e) {
 		let series = this.state.series;
-		series[param] = e.target.value;
+		series[params.title] = e.target.value;
     	this.setState({
             series: series,
     	});
 	}
-	submit(series, submitFunc, switchShowFunc) {
-		console.log(series);
+	submit(submitFunc, switchShowFunc) {
+		const { elementId, params } = this.props;
+		let series = {};
+		for(let i = 0; i < params.length; i++) {
+			let input = document.getElementById(elementId + i);
+			series[params[i].title] = input.value;
+		}
 		submitFunc(series);
 		switchShowFunc();
 	}
 	render () {
-		const style = require('./SeriesModal.scss');
-		const { switchShowFunc, submitFunc, showModal, title, params } = this.props;
+		const style = require('./InputModal.scss');
+		const { switchShowFunc, submitFunc, showModal, title, params, elementId } = this.props;
 		const { series } = this.state;
-		console.log(params);
 		return (
 			<div style={ {'display': showModal?'initial':'none'} }className={style.modalContainer}>
 				<div className={style.background} onClick={switchShowFunc}></div>
@@ -55,15 +68,15 @@ class SeriesModal extends React.Component {
 							params.map( (item, index) => {
 								return (
 									<div key={index} className={style.inputBox}>
-										<label>item</label>
-										<input defaultValue={item} onChange={this.handleParamChange.bind(this, event, item)}/>
+										<label>{item.title}</label>
+										<input id={elementId + index} defaultValue={item.value || ''} onChange={this.handleParamChange.bind(this, item)}/>
 									</div>			
 								);
 							})
 						}
 					</form>
 					<div className={style.functionBar}>
-						<span onClick={this.submit.bind(this, series, submitFunc, switchShowFunc)}>Confirm</span>
+						<span onClick={this.submit.bind(this, submitFunc, switchShowFunc)}>Confirm</span>
 						<span onClick={switchShowFunc}>Cancel</span>
 					</div>
 				</div>
@@ -72,4 +85,4 @@ class SeriesModal extends React.Component {
 	}
 }
 
-export default SeriesModal;
+export default InputModal;

@@ -26,6 +26,7 @@ class LoginButtonContainer extends React.Component {
 					actions.setMyProfile({
 						email: response.email,
 						provider: 'facebook',
+						name: response.name,
 						_id: response.id
 					});
 				});
