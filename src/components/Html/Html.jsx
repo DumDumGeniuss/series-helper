@@ -25,6 +25,7 @@ const css = `
 `;
 
 const fbScript = `
+  var IS_FB_API_LOADED = false;
   window.fbAsyncInit = function() {
   FB.init({
     appId      : '${process.env.FACEBOOK_API_ID}',
@@ -36,7 +37,12 @@ const fbScript = `
 
   FB.getLoginStatus(function(response) {
   	console.log(response);
+  	console.log(new Date());
   });
+  IS_FB_API_LOADED = true;
+
+  var event = new CustomEvent("fb-api-loaded", { "detail": "FB api loaded!!" });
+  document.dispatchEvent(event);
 
   };
   (function(d, s, id) {
@@ -72,10 +78,10 @@ class Html extends React.Component {
 					<style>{css}</style>
 				</head>
 				<body>
+					<script dangerouslySetInnerHTML={{ __html: fbScript}}/>
 					<div id="app" dangerouslySetInnerHTML={{ __html: reactHtml }}></div>
 					<script dangerouslySetInnerHTML={{ __html: `window.__INITIAL_STATE__ = ${serialize(store.getState())}`}}/>
 					<script src={assets.javascript.main} charSet="UTF-8"/>
-					<script dangerouslySetInnerHTML={{ __html: fbScript}}/>
 				</body>
 			</html>
 		);

@@ -57,7 +57,7 @@ class InputModal extends React.Component {
 		const { switchShowFunc, submitFunc, showModal, title, params, elementId } = this.props;
 		const { series } = this.state;
 		return (
-			<div style={ {'display': showModal?'initial':'none'} }className={style.modalContainer}>
+			<div className={showModal?style.modalContainer:style.invisibleContainer}>
 				<div className={style.background} onClick={switchShowFunc}></div>
 				<div className={style.contentBox}>
 					<h1 className={style.title}>

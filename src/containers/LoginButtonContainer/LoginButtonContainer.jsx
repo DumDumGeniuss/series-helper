@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import * as userActions from '../../actions/user.js';
 
 import FacebookSquare from 'react-icons/lib/fa/facebook-square';
+import fb from '../../apis/fb.js';
 
 class LoginButtonContainer extends React.Component {
 	static get propTypes() {
@@ -15,27 +16,38 @@ class LoginButtonContainer extends React.Component {
 		super(props);
 		this.state = {
 		};
+		this.checkFbLogin.bind(this);
 	}
 	componentDidMount() {
+		const self = this;
+		if (!IS_FB_API_LOADED) {
+			document.addEventListener("fb-api-loaded", function(e) {
+				self.checkFbLogin();
+			});
+		} else {
+			self.checkFbLogin();
+		}
+	}
+	checkFbLogin() {
+		const { actions } = this.props;
+		fb.checkLogin()
+			.then((res) => {
+				actions.setMyProfile();
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	}
 	login() {
 		const { actions } = this.props;
-		FB.login(function(response) {
-			if (response.status === 'connected') {
-				FB.api('/me', (response) => {
-					actions.setMyProfile({
-						email: response.email,
-						provider: 'facebook',
-						name: response.name,
-						_id: response.id
-					});
-				});
-			} else if (response.status === 'not_authorized') {
-				alert('Log in with facebook failed');
-			} else {
-				alert('Log in failed');
-			}
-		}, {scope: 'email'});
+		fb.login()
+			.then((res) => {
+				actions.setMyProfile();
+			})
+			.catch((err) => {
+				console.log(err);
+				alert('login failed');
+			});
 	}
 	logout() {
 		const { actions } = this.props;

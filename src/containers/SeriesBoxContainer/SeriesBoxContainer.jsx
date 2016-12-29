@@ -7,6 +7,8 @@ import * as seriesActions from '../../actions/series.js';
 import ItemsBox from '../../components/box/ItemsBox/ItemsBox.jsx';
 import InputModal from '../../components/modal/InputModal/InputModal.jsx';
 
+import fb from '../../apis/fb.js';
+
 class SeriesBoxContainer extends React.Component {
 	constructor(props) {
 		super(props);
@@ -28,10 +30,23 @@ class SeriesBoxContainer extends React.Component {
 		};
 	}
 	componentDidMount() {
-		const { actions } = this.props;
-		const { user } = this.props.state;
-		if(user.myProfile) {
+		const self = this;
+		const { actions } = self.props;
+		const { user } = self.props.state;
+		if (user.myProfile) {
 			actions.querySeries(user.myProfile._id);
+		} else if (!IS_FB_API_LOADED) {
+			document.addEventListener("fb-api-loaded", function(e) {
+				fb.checkLogin()
+					.then((res) => {
+						actions.querySeries(res.authResponse.userID);
+					});
+			});
+		} else {
+			fb.checkLogin()
+				.then((res) => {
+					actions.querySeries(res.authResponse.userID);
+				});
 		}
 	}
 	switchInputModal(modal) {
@@ -39,7 +54,7 @@ class SeriesBoxContainer extends React.Component {
 		showInputModals[modal] = !showInputModals[modal];
 		this.setState({
 			showInputModals: showInputModals,
-		})
+		});
 	}
 	clickSereisEdit(modal, index, seriesItem) {
 		let { editSeriesParams } = this.state;
@@ -51,7 +66,7 @@ class SeriesBoxContainer extends React.Component {
 		};
 		this.setState({
 			editSeriesParams: editSeriesParams,
-		})
+		});
 	}
 	clickSeasonEdit(modal, seriesIndex, seasonIndex, seasonItem) {
 		let { editSeasonParams } = this.state;
@@ -61,10 +76,9 @@ class SeriesBoxContainer extends React.Component {
 		editSeasonParams.item = {
 			link: seasonItem.link
 		};
-		console.log(editSeasonParams);
 		this.setState({
 			editSeasonParams: editSeasonParams,
-		})
+		});
 	}
 	resetSeries () {
 		const { actions } = this.props;
@@ -177,7 +191,7 @@ class SeriesBoxContainer extends React.Component {
 		const { series, user } = self.props.state;
 		const { showInputModals, editSeriesParams, editSeasonParams } = self.state;
 		const style = require('./SeriesBoxContainer.scss');
-		
+
 		return (
 			<div className={style.seriesBoxContainer}>
 				<InputModal

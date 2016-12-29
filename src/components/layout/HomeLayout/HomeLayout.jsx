@@ -15,14 +15,6 @@ class HomeLayout extends React.Component {
 	}
 	componentDidMount() {
 	}
-	login() {
-		FB.login(function(response) {
-			if (response.status === 'connected') {
-			} else if (response.status === 'not_authorized') {
-			} else {
-			}
-		});
-	}
 	render () {
 		const style = require('./HomeLayout.scss');
 		return (

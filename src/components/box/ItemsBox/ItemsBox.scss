@@ -38,8 +38,15 @@
 			margin: 0px 5px;
 			padding: 5px;
 			border-radius: 5px;
+			font-size: 1.5em;
 			color: white;
 			cursor: pointer;
+			box-shadow:inset 0 0 0 99999px rgba(255,255,255,0);
+			animation: fadeOutLightFont 0.7s;
+		}
+		.light:hover {
+			box-shadow:inset 0 0 0 99999px rgba(255,255,255,0.5);
+			animation: fadeInLightFont 0.7s;
 		}
 	
 		.red {
@@ -59,10 +66,29 @@
 			color: #777777;
 			cursor: pointer;
 			margin: 0px 1px;
-			:hover {
-				color: #ff4444;
-			}
 		}
+
+		.functionIcon:hover {
+			color: #000000;
+		}
+	}
+}
+
+@keyframes fadeInLightFont {
+	0% {
+		box-shadow:inset 0 0 0 99999px rgba(255,255,255,0);
+	}
+	100% {
+		box-shadow:inset 0 0 0 99999px rgba(255,255,255,0.5);
+	}
+}
+
+@keyframes fadeOutLightFont {
+	0% {
+		box-shadow:inset 0 0 0 99999px rgba(255,255,255,0.5);
+	}
+	100% {
+		box-shadow:inset 0 0 0 99999px rgba(255,255,255,0);
 	}
 }
 

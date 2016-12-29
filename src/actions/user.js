@@ -1,5 +1,6 @@
 import * as userConstant from '../constants/user.js';
 import * as userApi from '../apis/user.js';
+import fb from '../apis/fb.js';
 
 export function setMyProfileOptimistic(user) {
 	return {
@@ -8,9 +9,12 @@ export function setMyProfileOptimistic(user) {
 	};
 }
 
-export function setMyProfile(user) {
+export function setMyProfile() {
 	return dispatch => {
-		userApi.addUser(user)
+		fb.getMyProfile()
+			.then((res) => {
+				return userApi.addUser(res);
+			})
 			.then((res) => {
 				dispatch(setMyProfileOptimistic(res));
 			});
