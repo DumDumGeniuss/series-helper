@@ -10,13 +10,17 @@ export function setMyProfileOptimistic(user) {
 }
 
 export function setMyProfile() {
+	let user;
 	return dispatch => {
 		fb.getMyProfile()
 			.then((res) => {
-				return userApi.addUser(res);
+				user = res;
+				userApi.addUser(res);
+				return fb.getUerPhoto(user._id);
 			})
 			.then((res) => {
-				dispatch(setMyProfileOptimistic(res));
+				user.picture = res;
+				dispatch(setMyProfileOptimistic(user));
 			});
 	}
 }

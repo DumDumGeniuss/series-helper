@@ -56,7 +56,7 @@ class ItemsBox extends React.Component {
 		return (
 			<div style={ {display: displayStyle} } className={style.box}>
 				<div className={style.titleContainer}>
-					<span className={style.title}>{title}</span>
+					<span className={style.title}>{title || 'No Title'}</span>
 					<div className={style.rightItems}>
 						<span className={style.number}><b>{childNumberPrewords}{childNumber}</b></span>
 						<div className={style.light + ' ' + signalColor} onClick={updateStatusFunc}>{signalWord}</div>

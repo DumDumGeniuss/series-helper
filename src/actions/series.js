@@ -46,9 +46,10 @@ export function updateSeriesOptimistic(series) {
 }
 
 export function updateSeries(series) {
-	series.items = JSON.stringify(series.items);
+	let newSeries = JSON.parse(JSON.stringify(series));
+	newSeries.items = JSON.stringify(newSeries.items);
 	return dispatch => {
-		seriesApi.updateSeries(series)
+		seriesApi.updateSeries(newSeries)
 			.then((res) => {
 				res.items = JSON.parse(res.items);
 				dispatch(updateSeriesOptimistic(res));

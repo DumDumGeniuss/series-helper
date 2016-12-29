@@ -6,6 +6,7 @@ import * as seriesActions from '../../actions/series.js';
 
 import ItemsBox from '../../components/box/ItemsBox/ItemsBox.jsx';
 import InputModal from '../../components/modal/InputModal/InputModal.jsx';
+import DialogModal from '../../components/modal/DialogModal/DialogModal.jsx';
 
 import fb from '../../apis/fb.js';
 
@@ -26,8 +27,12 @@ class SeriesBoxContainer extends React.Component {
 				seriesIndex: 0,
 				seasonIndex: 0,
 				item: {}
-			}
+			},
+			showDialogModals: {
+				showSaveSeries: false,
+			},
 		};
+		this.checkFbLogin = this.checkFbLogin.bind(this);
 	}
 	componentDidMount() {
 		const self = this;
@@ -37,23 +42,32 @@ class SeriesBoxContainer extends React.Component {
 			actions.querySeries(user.myProfile._id);
 		} else if (!IS_FB_API_LOADED) {
 			document.addEventListener("fb-api-loaded", function(e) {
-				fb.checkLogin()
-					.then((res) => {
-						actions.querySeries(res.authResponse.userID);
-					});
+				self.checkFbLogin();
 			});
 		} else {
-			fb.checkLogin()
-				.then((res) => {
-					actions.querySeries(res.authResponse.userID);
-				});
+			self.checkFbLogin();
 		}
+	}
+	checkFbLogin() {
+		const self = this;
+		const { actions } = self.props;
+		fb.checkLogin()
+			.then((res) => {
+				actions.querySeries(res.authResponse.userID);
+			});
 	}
 	switchInputModal(modal) {
 		let { showInputModals } = this.state;
 		showInputModals[modal] = !showInputModals[modal];
 		this.setState({
 			showInputModals: showInputModals,
+		});
+	}
+	switchDialogModal(modal) {
+		let { showDialogModals } = this.state;
+		showDialogModals[modal] = !showDialogModals[modal];
+		this.setState({
+			showDialogModals: showDialogModals,
 		});
 	}
 	clickSereisEdit(modal, index, seriesItem) {
@@ -91,6 +105,7 @@ class SeriesBoxContainer extends React.Component {
 		series.items.push({
 			title: newSeries.title,
 			link: newSeries.link,
+			_id: this.generateId(),
 			status: 0,
 			items: [{
 				status: 2,
@@ -186,20 +201,39 @@ class SeriesBoxContainer extends React.Component {
 		series.items[index].items[seasonIndex].items.splice(series.items[index].items[seasonIndex].items.length - 1, 1);
 		actions.updateSeriesOptimistic(series);
 	}
+	generateId() {
+		let timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+		return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, () => {
+			return (Math.random() * 16 | 0).toString(16);
+		}).toLowerCase();
+	}
 	render () {
 		const self = this;
 		const { series, user } = self.props.state;
-		const { showInputModals, editSeriesParams, editSeasonParams } = self.state;
+		const { showInputModals, editSeriesParams, editSeasonParams, showDialogModals } = self.state;
 		const style = require('./SeriesBoxContainer.scss');
+		const titleFont = user.myProfile?(user.myProfile.name + '\'s Series'):'Please Login';
+		const userPictureElement = user.myProfile?<img src={user.myProfile.picture} />:null;
 
 		return (
 			<div className={style.seriesBoxContainer}>
+				{userPictureElement}
+				<h1 className={style.h1Title}>
+					{titleFont}
+				</h1>
+				<DialogModal
+					showModal={showDialogModals.showSaveSeries}
+					switchShowFunc={self.switchDialogModal.bind(self, 'showSaveSeries')}
+					submitFunc={self.saveSeries.bind(self)}
+					title={'Do you want to save?'}
+					elementId={'showSaveSeriesDialog'}
+				/>
 				<InputModal
 					showModal={showInputModals.showAddSeries}
 					switchShowFunc={self.switchInputModal.bind(self, 'showAddSeries')}
 					submitFunc={self.addSeries.bind(self)}
 					title={'Create New Series'}
-					params={[{title: 'title', value: 'input title'}, {title: 'link', value: 'input link'}]}
+					params={[{title: 'title', value: ''}, {title: 'link', value: ''}]}
 					elementId={'addSeriesModal'}
 				/>
 				<InputModal
@@ -218,22 +252,24 @@ class SeriesBoxContainer extends React.Component {
 					params={[{title: 'link', value: editSeasonParams.item.link}]}
 					elementId={'editSeasonModal'}
 				/>
-				<div style={ {'display': user.myProfile?'flex':'none'} } className={style.functionBar}>
-					<span className={style.mainFuncIcon + ' ' + style.redGradient} onClick={self.switchInputModal.bind(self, 'showAddSeries')}>
-						<b>Add</b>
-					</span>
-					<span className={style.mainFuncIcon + ' ' + style.orangeGradient} onClick={self.saveSeries.bind(self)}>
-						<b>Save</b>
-					</span>
-					<span className={style.mainFuncIcon + ' ' + style.greenGradient} onClick={self.resetSeries.bind(self)}>
-						<b>Reset</b>
-					</span>
+				<div style={ {'display': user.myProfile?'initial':'none'} } >
+					<div className={style.functionBar}>
+						<span className={style.mainFuncIcon + ' ' + style.redGradient} onClick={self.switchInputModal.bind(self, 'showAddSeries')}>
+							<b>Add</b>
+						</span>
+						<span className={style.mainFuncIcon + ' ' + style.orangeGradient} onClick={self.switchDialogModal.bind(self, 'showSaveSeries')}>
+							<b>Save</b>
+						</span>
+						<span className={style.mainFuncIcon + ' ' + style.greenGradient} onClick={self.resetSeries.bind(self)}>
+							<b>Reset</b>
+						</span>
+					</div>
 				</div>
 				<div style={ {'display': user.myProfile?'flex':'none'} } className={style.seriesBox}>
 					{
 						series.items.map( (seriesItem, index) => {
 							return (
-								<div key={seriesItem.createDate} className={style.itemsArea}>
+								<div key={seriesItem._id} className={style.itemsArea}>
 									<ItemsBox
 										item={seriesItem}
 										prewords={null}
@@ -249,7 +285,7 @@ class SeriesBoxContainer extends React.Component {
 											seriesItem.items.map( (seasonItem, seasonIndex) => {
 												return (
 													<ItemsBox
-														key={seasonIndex}
+														key={seriesItem._id + seasonIndex}
 														item={seasonItem}
 														prewords={'Season'}
 														childNumberPrewords={'EP'}
@@ -265,7 +301,7 @@ class SeriesBoxContainer extends React.Component {
 															seasonItem.items.map( (epItem, epIndex) => {
 																return (
 																	<ItemsBox
-																		key={epIndex}
+																		key={seriesItem._id + seasonIndex + epIndex}
 																		item={epItem}
 																		prewords={''}
 																		order={epIndex}

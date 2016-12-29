@@ -68,8 +68,8 @@ class InputModal extends React.Component {
 							params.map( (item, index) => {
 								return (
 									<div key={index} className={style.inputBox}>
-										<label>{item.title}</label>
-										<input id={elementId + index} defaultValue={item.value || ''} onChange={this.handleParamChange.bind(this, item)}/>
+										<label><b>{item.title}</b></label>
+										<input id={elementId + index} placeholder={item.title || ''} defaultValue={item.value || ''} onChange={this.handleParamChange.bind(this, item)}/>
 									</div>			
 								);
 							})

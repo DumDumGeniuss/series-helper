@@ -34,6 +34,13 @@ const fb = {
 				resolve(response);
 			});
 		});
+	},
+	getUerPhoto: function (userId) {
+		return new Promise((resolve, reject) => {
+			FB.api('/'+userId+'/picture', (response) => {
+				resolve(response.data.url);
+			});
+		});
 	}
 };
 

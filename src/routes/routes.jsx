@@ -6,7 +6,7 @@ import HomePage from '../components/page/HomePage/HomePage.jsx';
 
 export default (
 	<Route path="/" component={HomeLayout}>
-		<IndexRoute component={HomePage}>
+		<IndexRoute component={SeriesBoxContainer}>
 		</IndexRoute>
 		<Route path="/series" component={SeriesBoxContainer}>
 		</Route>

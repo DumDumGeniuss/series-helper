@@ -5,10 +5,11 @@ const css = `
 	body {
 		margin: 0px;
 		font-size: 50%;
+		-webkit-text-size-adjust: none;
 	}
 	* {
 		box-sizing: border-box;
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+		font-family: 'helvetica neue',helvetica,arial,'lucida grande',sans-serif;
 	}
 	a {
 		text-decoration: none;

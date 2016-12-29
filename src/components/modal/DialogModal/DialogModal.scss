@@ -35,7 +35,6 @@
 		.title {
 			text-align: center;
 			color: white;
-			font-size: 3em;
 		}
 
 		.functionBar {
@@ -50,27 +49,6 @@
 				color: white;
 				margin: 5px;
 				cursor: pointer;
-			}
-		}
-
-		.inputBox {
-			display: flex;
-			justify-content: center;
-			align-items:center;
-			padding: 5px 0px;
-
-			label {
-				width: 70px;
-				text-align: center;
-				color: white;
-				font-size: 2em;
-			}
-
-			input {
-				border-radius: 5px;
-				width: 200px;
-				height: 35px;
-				font-size: 2em;
 			}
 		}
 	}
