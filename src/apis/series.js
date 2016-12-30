@@ -13,10 +13,12 @@ export const getSeries = (_id) => {
 
 export const updateSeries = (series) => {
 	return fetch(process.env.API + '/series/' + series._id, {
+		query: {},
 		method: 'POST',
 		headers: {
 			'Accept': 'application/json',
 			'Content-Type': 'application/json',
+			'Auth-Token': localStorage.getItem('authToken')
 		},
 		mode: 'cors',
 		body: JSON.stringify(series)
@@ -26,8 +28,5 @@ export const updateSeries = (series) => {
 		})
 		.then((res) => {
 			return res;
-		})
-		.catch(err => {
-			alert('儲存失敗');
-		})
+		});
 };

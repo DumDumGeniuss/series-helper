@@ -1,3 +1,42 @@
-.logoBox {
-	cursor: pointer;
+.homePageContainer {
+	.firstZone {
+		display: flex;
+		align-items: center;
+		flex-direction:column;
+		padding: 0px 30px;
+		// background-color: #ecf7ff;
+
+		.firstZoneTitle {
+			font-size: 4em;
+			color: #185985;
+			word-break: break-word;
+			font-family: "jaf-facitweb",-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;
+			text-align: center;
+		}
+	
+		.logo {
+			display: block;
+			width: 400px;
+		}
+	
+		.logoBoxContainer {
+			cursor: pointer;
+		}
+	}
+
+	.secondZone {
+		display: flex;
+		align-items: center;
+		flex-direction:column;
+		padding: 0px 30px;
+		background-color: #024e80;
+
+		.secondZoneTitle {
+			font-size: 4em;
+			color: white;
+			word-break: break-word;
+			font-family: "jaf-facitweb",-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;
+			text-align: center;
+		}
+	}
 }

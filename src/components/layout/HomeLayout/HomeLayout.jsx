@@ -32,6 +32,9 @@ class HomeLayout extends React.Component {
 				<div className={style.content}>
 					{this.props.children}
 				</div>
+				<div className={style.footer}>
+					Copyright © DumDumGenius
+				</div>
 			</div>
 		);
 	}

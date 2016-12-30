@@ -17,6 +17,7 @@ class ItemsBox extends React.Component {
 			addItemFunc: React.PropTypes.func,
 			clickEditFunc: React.PropTypes.func,
 			deleteItemFunc: React.PropTypes.func,
+			editable: React.PropTypes.bool,
 		}
 	}
 	constructor(props) {
@@ -32,7 +33,7 @@ class ItemsBox extends React.Component {
 	}
 	render () {
 		const style = require('./ItemsBox.scss');
-		const { item, children, prewords, order, updateStatusFunc, addItemFunc, clickEditFunc, deleteItemFunc, displayStyle, childNumber, childNumberPrewords } = this.props;
+		const { item, children, prewords, order, updateStatusFunc, addItemFunc, clickEditFunc, deleteItemFunc, displayStyle, childNumber, childNumberPrewords, editable } = this.props;
 		const { showChild } = this.state;
 		const title = item.title?item.title:(prewords + (order+1));
 		const link = item.link?item.link:null;
@@ -59,9 +60,9 @@ class ItemsBox extends React.Component {
 					<span className={style.title}>{title || 'No Title'}</span>
 					<div className={style.rightItems}>
 						<span className={style.number}><b>{childNumberPrewords}{childNumber}</b></span>
-						<div className={style.light + ' ' + signalColor} onClick={updateStatusFunc}>{signalWord}</div>
+						<div className={style.light + ' ' + signalColor} onClick={editable?updateStatusFunc:(function(){})}>{signalWord}</div>
 						<div style={ {'display': children?'initial':'none'} }>
-							<Edit onClick={clickEditFunc} className={style.functionIcon} />
+							<Edit onClick={clickEditFunc} className={editable?style.functionIcon:style.invisible} />
 							<a style={ {'display': link?'initial':'none'} } href={link} target={"_blank"}>
 								<Film className={style.functionIcon} />
 							</a>
@@ -81,11 +82,11 @@ class ItemsBox extends React.Component {
 				<div style={ {'display': showChild?'initial':'none'} } className={style.content}>
 					<div className={style.leftBox}>
 						<Minus
-							className={style.minusItemIcon}
+							className={editable?style.minusItemIcon:style.invisible}
 							onClick={deleteItemFunc}
 						/>
 						<Plus
-							className={style.addItemIcon}
+							className={editable?style.addItemIcon:style.invisible}
 							onClick={addItemFunc}
 						/>
 					</div>

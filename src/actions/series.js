@@ -53,6 +53,9 @@ export function updateSeries(series) {
 			.then((res) => {
 				res.items = JSON.parse(res.items);
 				dispatch(updateSeriesOptimistic(res));
+			})
+			.catch((err) => {
+				console.log('更新失敗！');
 			});
 	};
 }
@@ -64,9 +67,9 @@ export function querySeriesOptimistic(series) {
 	};
 }
 
-export function querySeries(userId) {
+export function querySeries(seriesId) {
 	return dispatch => {
-		seriesApi.getSeries(userId)
+		seriesApi.getSeries(seriesId)
 			.then((res) => {
 				res.items = JSON.parse(res.items);
 				dispatch(querySeriesOptimistic(res));

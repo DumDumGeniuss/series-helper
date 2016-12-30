@@ -7,11 +7,12 @@ class LogoBox extends React.Component {
 	}
 	render () {
 		const style = require('./LogoBox.scss');
-		const funyee = require('./funyee.png');
+		const seriesHelper = require('./SeriesHelper.png');
+		const { boxWidth, boxHeight } = this.props; 
 		return (
-			<div className={style.logoCircle}>
+			<div style={ {width: boxWidth+'px', height: boxHeight+'px'} } className={style.logoCircle}>
 				<figure>
-					<img className={style.logo} src={funyee} />
+					<img style={ {width: (boxWidth-50)+'px', height: (boxHeight-50)+'px'} } className={style.logo} src={seriesHelper} />
 				</figure>
 			</div>
 		);

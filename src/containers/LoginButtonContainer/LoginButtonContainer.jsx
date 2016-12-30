@@ -30,9 +30,21 @@ class LoginButtonContainer extends React.Component {
 	}
 	checkFbLogin() {
 		const { actions } = this.props;
+		let user;
 		fb.checkLogin()
 			.then((res) => {
-				actions.setMyProfile();
+				if(res.status!=='connected') {
+					throw new Error('not logged in');
+				}
+				return fb.getMyProfile();
+			})
+			.then((res) => {
+				user = res;
+				return fb.getUerPhoto(user._id);
+			})
+			.then((res) => {
+				user.picture = res;
+				actions.setMyProfile(user);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -40,20 +52,33 @@ class LoginButtonContainer extends React.Component {
 	}
 	login() {
 		const { actions } = this.props;
+		let user;
 		fb.login()
 			.then((res) => {
-				actions.setMyProfile();
+				return fb.getMyProfile();
+				// actions.setMyProfile();
+			})
+			.then((res) => {
+				user = res;
+				return fb.getUerPhoto(user._id);
+			})
+			.then((res) => {
+				user.picture = res;
+				actions.setMyProfile(user);
 			})
 			.catch((err) => {
 				console.log(err);
-				alert('login failed');
 			});
 	}
 	logout() {
 		const { actions } = this.props;
-		FB.logout((response) => {
-			actions.clearMyProfileOptimistic();
-		})
+		fb.logOut()
+			.then((res) => {
+				actions.clearMyProfileOptimistic();
+			})
+			.catch((err) => {
+				actions.clearMyProfileOptimistic();
+			});
 	}
 	render () {
 		const style = require('./LoginButtonContainer.scss');

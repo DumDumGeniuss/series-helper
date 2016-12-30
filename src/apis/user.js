@@ -2,14 +2,14 @@ require('es6-promise').polyfill();
 import fetch from 'isomorphic-fetch';
 
 export const getUser = (_id) => {
-	fetch(process.env.API + '/users/' + _id)
+	return fetch(process.env.API + '/users/' + _id)
 		.then((res) => {
-			res.json();
+			return res.json();
 		});
 };
 
-export const addUser = (user) => {
-	return fetch(process.env.API + '/users', {
+export const updateUser = (user) => {
+	return fetch(process.env.API + '/users/auth', {
 		method: 'POST',
 		headers: {
 			'Accept': 'application/json',
@@ -25,6 +25,6 @@ export const addUser = (user) => {
 			return res;
 		})
 		.catch(err => {
-			alert('登錄失敗');
+			console.log('登錄失敗');
 		})
 };

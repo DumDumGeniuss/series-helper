@@ -8,6 +8,7 @@
 	left: 0;
 	top: 0;
 	background-color: #024e80;
+	z-index: 2;
 
 	.webTitle {
 		cursor: pointer;
@@ -25,5 +26,14 @@
 
 .content {
 	margin-top: 40px;
-	padding: 10px 0px;
+	padding: 0px 0px;
+}
+
+.footer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font: 2.5em "Helvetica Neue",Arial,Helvetica,sans-serif;
+	height: 40px;
+	background-color: #024e80;
 }

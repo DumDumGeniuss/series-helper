@@ -9,6 +9,7 @@ import InputModal from '../../components/modal/InputModal/InputModal.jsx';
 import DialogModal from '../../components/modal/DialogModal/DialogModal.jsx';
 
 import fb from '../../apis/fb.js';
+import * as userApi from '../../apis/user.js';
 
 class SeriesBoxContainer extends React.Component {
 	constructor(props) {
@@ -31,30 +32,26 @@ class SeriesBoxContainer extends React.Component {
 			showDialogModals: {
 				showSaveSeries: false,
 			},
+			seriesOwnerProfile: null
 		};
-		this.checkFbLogin = this.checkFbLogin.bind(this);
+		this.getSeries = this.getSeries.bind(this);
 	}
 	componentDidMount() {
 		const self = this;
-		const { actions } = self.props;
-		const { user } = self.props.state;
-		if (user.myProfile) {
-			actions.querySeries(user.myProfile._id);
-		} else if (!IS_FB_API_LOADED) {
+		if (!IS_FB_API_LOADED) {
 			document.addEventListener("fb-api-loaded", function(e) {
-				self.checkFbLogin();
+				self.getSeries();
 			});
 		} else {
-			self.checkFbLogin();
+			self.getSeries();
 		}
 	}
-	checkFbLogin() {
-		const self = this;
-		const { actions } = self.props;
-		fb.checkLogin()
-			.then((res) => {
-				actions.querySeries(res.authResponse.userID);
-			});
+	componentWillReceiveProps(nextProps) {
+		const { actions, params } = this.props;
+		const { series } = nextProps.state;
+		if(params.userId && !series._id) {
+			// this.getSeries();
+		}
 	}
 	switchInputModal(modal) {
 		let { showInputModals } = this.state;
@@ -94,10 +91,30 @@ class SeriesBoxContainer extends React.Component {
 			editSeasonParams: editSeasonParams,
 		});
 	}
-	resetSeries () {
-		const { actions } = this.props;
-		const { user } = this.props.state;
-		actions.querySeries(user.myProfile._id);
+	getSeries() {
+		const self = this;
+		const { actions, params } = self.props;
+
+		fb.checkLogin()
+			.then((res) => {
+				let isLogin = res.status==='connected'?true:false;
+				if (!isLogin && !params.userId) {
+					throw new Error('You must log in');
+				} else if (isLogin && !params.userId) {
+					return userApi.getUser(res.authResponse.userID);
+				} else {
+					return userApi.getUser(params.userId);
+				}
+			})
+			.then((res) => {
+				self.setState({
+					seriesOwnerProfile: res
+				});
+				actions.querySeries(res._id);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	}
 	addSeries(newSeries) {
 		const { actions } = this.props;
@@ -116,14 +133,9 @@ class SeriesBoxContainer extends React.Component {
 		});
 		actions.updateSeriesOptimistic(series);
 	}
-	deleteSeries(index) {
-		const { actions } = this.props;
-		const { series } = this.props.state;
-		series.items.splice(index, 1);
-	}
 	saveSeries() {
 		const { actions } = this.props;
-		const { series } = this.props.state;
+		const { series, user } = this.props.state;
 		actions.updateSeries(series);
 	}
 	updateSeries(newSeries) {
@@ -142,17 +154,27 @@ class SeriesBoxContainer extends React.Component {
 		series.items[index].status = (series.items[index].status + 1) % 3;
 		actions.updateSeriesOptimistic(series);
 	}
-	updateSeasonStatus(index, seasonIndex) {
+	resetSeries () {
 		const { actions } = this.props;
-		const { series } = this.props.state;
-		series.items[index].items[seasonIndex].status = (series.items[index].items[seasonIndex].status + 1) % 3;
-		actions.updateSeriesOptimistic(series);
+		const { series, user } = this.props.state;
+		fb.checkLogin()
+			.then((res) => {
+				if (res.status !== 'connected')  {
+					throw new Error('You are not logged in');
+				}
+				if (user.myProfile._id !== series._id) {
+					throw new Error('You don\'s have right to reset this series');
+				}
+				actions.querySeries(user.myProfile._id);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	}
-	updateEpStatus(index, seasonIndex, epIndex) {
+	deleteSeries(index) {
 		const { actions } = this.props;
 		const { series } = this.props.state;
-		series.items[index].items[seasonIndex].items[epIndex].status = (series.items[index].items[seasonIndex].items[epIndex].status + 1) % 3;
-		actions.updateSeriesOptimistic(series);
+		series.items.splice(index, 1);
 	}
 	addSeason(index) {
 		const { actions } = this.props;
@@ -175,12 +197,11 @@ class SeriesBoxContainer extends React.Component {
 		}
 		actions.updateSeriesOptimistic(series);
 	}
-	addEp(index, seasonIndex) {
+	updateSeasonStatus(index, seasonIndex) {
+		fb.getMyProfile();
 		const { actions } = this.props;
 		const { series } = this.props.state;
-		series.items[index].items[seasonIndex].items.push({
-			status: 2
-		});
+		series.items[index].items[seasonIndex].status = (series.items[index].items[seasonIndex].status + 1) % 3;
 		actions.updateSeriesOptimistic(series);
 	}
 	deleteSeason(index) {
@@ -190,6 +211,20 @@ class SeriesBoxContainer extends React.Component {
 			return;
 		}
 		series.items[index].items.splice(series.items[index].items.length - 1, 1);
+		actions.updateSeriesOptimistic(series);
+	}
+	addEp(index, seasonIndex) {
+		const { actions } = this.props;
+		const { series } = this.props.state;
+		series.items[index].items[seasonIndex].items.push({
+			status: 2
+		});
+		actions.updateSeriesOptimistic(series);
+	}
+	updateEpStatus(index, seasonIndex, epIndex) {
+		const { actions } = this.props;
+		const { series } = this.props.state;
+		series.items[index].items[seasonIndex].items[epIndex].status = (series.items[index].items[seasonIndex].items[epIndex].status + 1) % 3;
 		actions.updateSeriesOptimistic(series);
 	}
 	deleteEp(index, seasonIndex) {
@@ -210,116 +245,127 @@ class SeriesBoxContainer extends React.Component {
 	render () {
 		const self = this;
 		const { series, user } = self.props.state;
-		const { showInputModals, editSeriesParams, editSeasonParams, showDialogModals } = self.state;
+		const { seriesOwnerProfile, showInputModals, editSeriesParams, editSeasonParams, showDialogModals } = self.state;
 		const style = require('./SeriesBoxContainer.scss');
-		const titleFont = user.myProfile?(user.myProfile.name + '\'s Series'):'Please Login';
-		const userPictureElement = user.myProfile?<img src={user.myProfile.picture} />:null;
+		const seriesHelper = require('./SeriesHelper.png');
+		const currentUserId = user.myProfile?user.myProfile._id:'';
+		const [seriesOwnerId, seriesOwnerName, seriesOwnerPicture] = seriesOwnerProfile?[seriesOwnerProfile._id, seriesOwnerProfile.name, seriesOwnerProfile.picture]:[];
+		const seriesTitleFont = seriesOwnerName?(seriesOwnerName + '\'s Series'):'';
+		const seriesOwnerPictureElement = seriesOwnerPicture?<img src={seriesOwnerPicture} />:null;
+		const hasEditRight = currentUserId===seriesOwnerId?true:false;
 
 		return (
-			<div className={style.seriesBoxContainer}>
-				{userPictureElement}
-				<h1 className={style.h1Title}>
-					{titleFont}
-				</h1>
-				<DialogModal
-					showModal={showDialogModals.showSaveSeries}
-					switchShowFunc={self.switchDialogModal.bind(self, 'showSaveSeries')}
-					submitFunc={self.saveSeries.bind(self)}
-					title={'Do you want to save?'}
-					elementId={'showSaveSeriesDialog'}
-				/>
-				<InputModal
-					showModal={showInputModals.showAddSeries}
-					switchShowFunc={self.switchInputModal.bind(self, 'showAddSeries')}
-					submitFunc={self.addSeries.bind(self)}
-					title={'Create New Series'}
-					params={[{title: 'title', value: ''}, {title: 'link', value: ''}]}
-					elementId={'addSeriesModal'}
-				/>
-				<InputModal
-					showModal={showInputModals.showEditSeries}
-					switchShowFunc={self.switchInputModal.bind(self, 'showEditSeries')}
-					submitFunc={self.updateSeries.bind(self)}
-					title={'Edit Series'}
-					params={[{title: 'title', value: editSeriesParams.item.title}, {title: 'link', value: editSeriesParams.item.link}]}
-					elementId={'editSeriesModal'}
-				/>
-				<InputModal
-					showModal={showInputModals.showEditSeason}
-					switchShowFunc={self.switchInputModal.bind(self, 'showEditSeason')}
-					submitFunc={self.updateSeason.bind(self)}
-					title={'Edit Season'}
-					params={[{title: 'link', value: editSeasonParams.item.link}]}
-					elementId={'editSeasonModal'}
-				/>
-				<div style={ {'display': user.myProfile?'initial':'none'} } >
-					<div className={style.functionBar}>
-						<span className={style.mainFuncIcon + ' ' + style.redGradient} onClick={self.switchInputModal.bind(self, 'showAddSeries')}>
-							<b>Add</b>
-						</span>
-						<span className={style.mainFuncIcon + ' ' + style.orangeGradient} onClick={self.switchDialogModal.bind(self, 'showSaveSeries')}>
-							<b>Save</b>
-						</span>
-						<span className={style.mainFuncIcon + ' ' + style.greenGradient} onClick={self.resetSeries.bind(self)}>
-							<b>Reset</b>
-						</span>
+			<div className={style.outsider}>
+				<div className={style.seriesBoxContainer}>
+					<figure>
+						{seriesOwnerPictureElement}
+					</figure>
+					<h1 className={style.h1Title}>
+						{seriesTitleFont}
+					</h1>
+					<div className={currentUserId===seriesOwnerId?'':style.invisible}>
+						<div className={style.functionBar}>
+							<span className={style.mainFuncIcon + ' ' + style.redGradient} onClick={self.switchInputModal.bind(self, 'showAddSeries')}>
+								<b>Add</b>
+							</span>
+							<span className={style.mainFuncIcon + ' ' + style.orangeGradient} onClick={self.switchDialogModal.bind(self, 'showSaveSeries')}>
+								<b>Save</b>
+							</span>
+							<span className={style.mainFuncIcon + ' ' + style.greenGradient} onClick={self.resetSeries.bind(self)}>
+								<b>Reset</b>
+							</span>
+						</div>
 					</div>
-				</div>
-				<div style={ {'display': user.myProfile?'flex':'none'} } className={style.seriesBox}>
-					{
-						series.items.map( (seriesItem, index) => {
-							return (
-								<div key={seriesItem._id} className={style.itemsArea}>
-									<ItemsBox
-										item={seriesItem}
-										prewords={null}
-										childNumberPrewords={'S'}
-										childNumber={seriesItem.items.length}
-										updateStatusFunc={self.updateSeriesStatus.bind(self, index)}
-										addItemFunc={self.addSeason.bind(self, index)}
-										deleteItemFunc={self.deleteSeason.bind(self, index)}
-										clickEditFunc={self.clickSereisEdit.bind(self, 'showEditSeries', index, seriesItem)}
-										displayStyle={'block'}
-									>
-										{
-											seriesItem.items.map( (seasonItem, seasonIndex) => {
-												return (
-													<ItemsBox
-														key={seriesItem._id + seasonIndex}
-														item={seasonItem}
-														prewords={'Season'}
-														childNumberPrewords={'EP'}
-														childNumber={seasonItem.items.length}
-														order={seasonIndex}
-														updateStatusFunc={self.updateSeasonStatus.bind(self, index, seasonIndex)}
-														addItemFunc={self.addEp.bind(self, index, seasonIndex)}
-														deleteItemFunc={self.deleteEp.bind(self, index, seasonIndex)}
-														clickEditFunc={self.clickSeasonEdit.bind(self, 'showEditSeason', index, seasonIndex, seriesItem)}
-														displayStyle={'block'}
-													>
-														{
-															seasonItem.items.map( (epItem, epIndex) => {
-																return (
-																	<ItemsBox
-																		key={seriesItem._id + seasonIndex + epIndex}
-																		item={epItem}
-																		prewords={''}
-																		order={epIndex}
-																		updateStatusFunc={self.updateEpStatus.bind(self, index, seasonIndex, epIndex)}
-																		displayStyle={'inline-flex'}
-																	/>
-																)
-															})
-														}
-													</ItemsBox>
-												)
-											})
-										}
-									</ItemsBox>
-								</div>
-							)
-						})
-					}
+					<div className={style.seriesBox}>
+						{
+							series.items.map( (seriesItem, index) => {
+								return (
+									<div key={seriesItem._id} className={style.itemsArea}>
+										<ItemsBox
+											item={seriesItem}
+											prewords={null}
+											childNumberPrewords={'S'}
+											childNumber={seriesItem.items.length}
+											updateStatusFunc={self.updateSeriesStatus.bind(self, index)}
+											addItemFunc={self.addSeason.bind(self, index)}
+											deleteItemFunc={self.deleteSeason.bind(self, index)}
+											clickEditFunc={self.clickSereisEdit.bind(self, 'showEditSeries', index, seriesItem)}
+											displayStyle={'block'}
+											editable={hasEditRight}
+										>
+											{
+												seriesItem.items.map( (seasonItem, seasonIndex) => {
+													return (
+														<ItemsBox
+															key={seriesItem._id + seasonIndex}
+															item={seasonItem}
+															prewords={'Season'}
+															childNumberPrewords={'EP'}
+															childNumber={seasonItem.items.length}
+															order={seasonIndex}
+															updateStatusFunc={self.updateSeasonStatus.bind(self, index, seasonIndex)}
+															addItemFunc={self.addEp.bind(self, index, seasonIndex)}
+															deleteItemFunc={self.deleteEp.bind(self, index, seasonIndex)}
+															clickEditFunc={self.clickSeasonEdit.bind(self, 'showEditSeason', index, seasonIndex, seriesItem)}
+															displayStyle={'block'}
+															editable={hasEditRight}
+														>
+															{
+																seasonItem.items.map( (epItem, epIndex) => {
+																	return (
+																		<ItemsBox
+																			key={seriesItem._id + seasonIndex + epIndex}
+																			item={epItem}
+																			prewords={''}
+																			order={epIndex}
+																			updateStatusFunc={self.updateEpStatus.bind(self, index, seasonIndex, epIndex)}
+																			displayStyle={'inline-flex'}
+																			editable={hasEditRight}
+																		/>
+																	)
+																})
+															}
+														</ItemsBox>
+													)
+												})
+											}
+										</ItemsBox>
+									</div>
+								)
+							})
+						}
+					</div>
+					<DialogModal
+						showModal={showDialogModals.showSaveSeries}
+						switchShowFunc={self.switchDialogModal.bind(self, 'showSaveSeries')}
+						submitFunc={self.saveSeries.bind(self)}
+						title={'Do you want to save?'}
+						elementId={'showSaveSeriesDialog'}
+					/>
+					<InputModal
+						showModal={showInputModals.showAddSeries}
+						switchShowFunc={self.switchInputModal.bind(self, 'showAddSeries')}
+						submitFunc={self.addSeries.bind(self)}
+						title={'Create New Series'}
+						params={[{title: 'title', value: ''}, {title: 'link', value: ''}]}
+						elementId={'addSeriesModal'}
+					/>
+					<InputModal
+						showModal={showInputModals.showEditSeries}
+						switchShowFunc={self.switchInputModal.bind(self, 'showEditSeries')}
+						submitFunc={self.updateSeries.bind(self)}
+						title={'Edit Series'}
+						params={[{title: 'title', value: editSeriesParams.item.title}, {title: 'link', value: editSeriesParams.item.link}]}
+						elementId={'editSeriesModal'}
+					/>
+					<InputModal
+						showModal={showInputModals.showEditSeason}
+						switchShowFunc={self.switchInputModal.bind(self, 'showEditSeason')}
+						submitFunc={self.updateSeason.bind(self)}
+						title={'Edit Season'}
+						params={[{title: 'link', value: editSeasonParams.item.link}]}
+						elementId={'editSeasonModal'}
+					/>
 				</div>
 			</div>
 		);
