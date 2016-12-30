@@ -48,7 +48,7 @@ class SeriesBoxContainer extends React.Component {
 	}
 	componentWillReceiveProps(nextProps) {
 		const { actions, params } = this.props;
-		const { series } = nextProps.state;]
+		const { series } = nextProps.state;
 		if(!series._id) {
 			this.getSeries();
 		}
