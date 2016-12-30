@@ -61,15 +61,19 @@ const fb = {
 		return new Promise((resolve, reject) => {
 			FB.getLoginStatus(function(response) {
 				fbResponse = response
-				user._id = fbResponse.authResponse.userID;
-				user.authToken = fbResponse.authResponse.accessToken;
-				/* Save tokens */
-				localStorage.setItem("authToken", user.authToken);
-				
-				userApi.updateUser(user)
-					.then((res)=> {
-						resolve(fbResponse);
-					});
+				if(fbResponse.authResponse) {
+					user._id = fbResponse.authResponse.userID;
+					user.authToken = fbResponse.authResponse.accessToken;
+					/* Save tokens */
+					localStorage.setItem("authToken", user.authToken);
+	
+					userApi.updateUser(user)
+						.then((res)=> {
+							resolve(fbResponse);
+						});
+				} else {
+					resolve(fbResponse);
+				}
 			})
 		});
 	},
