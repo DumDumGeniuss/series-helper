@@ -20,7 +20,7 @@
 		padding: 10px 0px;
 		max-width: 250px;
 		text-align: center;
-		word-break: break-all;
+		word-wrap: break-word;
 	}
 
 	.rightItems {
@@ -118,6 +118,12 @@
 	.childContainer {
 		margin-bottom: 10px;
 		margin-left: 50px;
+	}
+}
+
+@media screen and (max-width: 500px) {
+	.titleContainer {
+		padding: 2px 2px;
 	}
 }
 

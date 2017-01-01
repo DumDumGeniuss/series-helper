@@ -1,21 +1,6 @@
 import * as userApi from './user.js';
 
 
-// const getCookie = (name) => {
-// 	let sep_1 = "; " + document.cookie;
-// 	let parts = sep_1.split("; " + name + "=");
-// 	return parts.pop().split(";")[0];
-// };
-// const setCookie = (name, value) => {
-// 	if (getCookie(name)) {
-// 		document.cookie = name + "=; Max-Age=0";
-// 	}
-// 	document.cookie = name + "=" + value + ";path=";
-// };
-// const deleteCookie = (name) => {
-// 	document.cookie = name + "=; Max-Age=0";
-// };
-
 const fb = {
 	getMyProfile: function () {
 		return new Promise((resolve, reject) => {

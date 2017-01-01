@@ -1,13 +1,39 @@
 .outsider {
 	position: relative;
 	overflow: hidden;
+	display: flex;
+	justify-content: center;
 }
 
 .invisible {
 	display: none;
 }
 
+.pleasLoginContainer {
+	width: 1000px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	padding: 10px 0px;
+	border: 3px solid #024e80;
+	border-radius: 15px;
+	min-height: calc(100vh - 80px);
+	margin: 10px;
+
+	.loginMessage {
+		display: inline-block;
+		border-radius: 5px;
+		border: 3px solid #024e80;
+		padding: 10px ;
+		background-color: #024e80;
+		color: white;
+		font-size: 3em;
+	}
+}
+
 .seriesBoxContainer {
+	width: 1000px;
 	position: relative;
 	display: flex;
 	flex-direction:column;
@@ -44,7 +70,6 @@
 	height: 50px;
 	display:flex;
 	justify-content: center;
-	align-items:center;
 
 	.mainFuncIcon {
 		display: inline-block;

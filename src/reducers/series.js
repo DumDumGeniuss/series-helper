@@ -12,6 +12,8 @@ export default function series(state = initState, action) {
 		return Object.assign({}, state, action.series);
 	case seriesConstant.UPDATE_SERIES:
 		return Object.assign({}, state, action.series);
+	case seriesConstant.CLEAR_SERIES:
+		return Object.assign({}, state, initState);
 	default:
 		return state;
 	}

@@ -13,6 +13,14 @@
 			font-family: "jaf-facitweb",-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;
 			text-align: center;
 		}
+
+		.firstZoneSubTitle {
+			font-size: 3em;
+			color: #185985;
+			word-break: break-word;
+			font-family: "jaf-facitweb",-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;
+			text-align: center;
+		}
 	
 		.logo {
 			display: block;
@@ -31,6 +39,16 @@
 		padding: 0px 30px;
 		background-color: #024e80;
 
+		.displayPhoto {
+			// margin: 10px 0px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			img {
+				width: 90%;
+			}
+		}
+
 		.secondZoneTitle {
 			font-size: 4em;
 			color: white;
@@ -38,5 +56,14 @@
 			font-family: "jaf-facitweb",-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;
 			text-align: center;
 		}
+
+		.secondZoneSubTitle {
+			font-size: 3em;
+			color: white;
+			word-break: break-word;
+			font-family: "jaf-facitweb",-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;
+			text-align: center;
+		}
+
 	}
 }

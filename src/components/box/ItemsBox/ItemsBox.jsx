@@ -40,16 +40,16 @@ class ItemsBox extends React.Component {
 		let [signalColor, signalWord] = [];
 		switch (item.status) {
 		case 0:
-			signalColor = style.red;
-			signalWord = 'prepare';
+			signalColor = style.green;
+			signalWord = '完成';
 			break;
 		case 1:
 			signalColor = style.orange;
-			signalWord = 'following';
+			signalWord = '追蹤';
 			break;
 		case 2:
-			signalColor = style.green;
-			signalWord = 'Done';
+			signalColor = style.orange;
+			signalWord = 'follow';
 			break;
 		default:
 			break;
@@ -57,9 +57,9 @@ class ItemsBox extends React.Component {
 		return (
 			<div style={ {display: displayStyle} } className={style.box}>
 				<div className={style.titleContainer}>
-					<span className={style.title}>{title || 'No Title'}</span>
+					<span className={style.title}>{title || '沒有名稱'}</span>
 					<div className={style.rightItems}>
-						<span className={style.number}><b>{childNumberPrewords}{childNumber}</b></span>
+						<span className={childNumber?style.number:style.invisible}><b>{childNumberPrewords}{childNumber}</b></span>
 						<div className={style.light + ' ' + signalColor} onClick={editable?updateStatusFunc:(function(){})}>{signalWord}</div>
 						<div style={ {'display': children?'initial':'none'} }>
 							<Edit onClick={clickEditFunc} className={editable?style.functionIcon:style.invisible} />

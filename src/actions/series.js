@@ -76,3 +76,9 @@ export function querySeries(seriesId) {
 			});
 	}
 }
+
+export function clearSeriesOptimistic() {
+	return {
+		type: seriesConstant.CLEAR_SERIES
+	}
+}

@@ -1,0 +1,25 @@
+.loadingBox {
+	display: inline-flex;
+	justify-content: center;
+	align-items:center;
+	color: white;
+	svg {
+		animation: spin 1s linear;
+	}
+}
+
+.invisible {
+	display: none;
+}
+
+@keyframes spin{
+	0% {
+		transform: rotate(0deg)
+	}
+	50% {
+		transform: rotate(180deg)
+	}
+	100% {
+		transform: rotate(360deg)
+	}
+}

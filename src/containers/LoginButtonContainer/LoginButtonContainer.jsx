@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as userActions from '../../actions/user.js';
 
+import LoadingBox from '../../components/box/LoadingBox/LoadingBox.jsx';
+
 import FacebookSquare from 'react-icons/lib/fa/facebook-square';
 import fb from '../../apis/fb.js';
 
@@ -15,6 +17,7 @@ class LoginButtonContainer extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			onLoading: false,
 		};
 		this.checkFbLogin.bind(this);
 	}
@@ -51,8 +54,12 @@ class LoginButtonContainer extends React.Component {
 			});
 	}
 	login() {
-		const { actions } = this.props;
+		const self = this;
+		const { actions } = self.props;
 		let user;
+		self.setState({
+			onLoading: true
+		});
 		fb.login()
 			.then((res) => {
 				return fb.getMyProfile();
@@ -65,16 +72,26 @@ class LoginButtonContainer extends React.Component {
 			.then((res) => {
 				user.picture = res;
 				actions.setMyProfile(user);
+				self.setState({
+					onLoading: false
+				});
 			})
 			.catch((err) => {
 				console.log(err);
 			});
 	}
 	logout() {
-		const { actions } = this.props;
+		const self = this;
+		const { actions } = self.props;
+		self.setState({
+			onLoading: true
+		});
 		fb.logOut()
 			.then((res) => {
 				actions.clearMyProfileOptimistic();
+				self.setState({
+					onLoading: false
+				});
 			})
 			.catch((err) => {
 				actions.clearMyProfileOptimistic();
@@ -83,13 +100,18 @@ class LoginButtonContainer extends React.Component {
 	render () {
 		const style = require('./LoginButtonContainer.scss');
 		const { user } = this.props.state;
+		const { onLoading } = this.state;
 		return (
 			<div>
 				<div style={ {'display': user.myProfile?'none':'initial'} } className={style.loginButtonContainer} onClick={this.login.bind(this)}>
-					Log in <FacebookSquare />
+					登入
+					<FacebookSquare className={onLoading?style.invisible:''} />
+					<LoadingBox boxWidth={20} boxHeight={20} visible={onLoading} color={'yellow'}/>
 				</div>
 				<div style={ {'display': user.myProfile?'initial':'none'} } className={style.loginButtonContainer} onClick={this.logout.bind(this)}>
-					Log out <FacebookSquare />
+					登出
+					<FacebookSquare className={onLoading?style.invisible:''} />
+					<LoadingBox boxWidth={35} boxHeight={35} visible={onLoading} color={'yellow'}/>
 				</div>
 			</div>
 		);

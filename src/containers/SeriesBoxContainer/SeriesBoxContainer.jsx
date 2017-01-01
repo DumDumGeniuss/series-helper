@@ -7,9 +7,11 @@ import * as seriesActions from '../../actions/series.js';
 import ItemsBox from '../../components/box/ItemsBox/ItemsBox.jsx';
 import InputModal from '../../components/modal/InputModal/InputModal.jsx';
 import DialogModal from '../../components/modal/DialogModal/DialogModal.jsx';
+import LoginButtonContainer from '../../containers/LoginButtonContainer/LoginButtonContainer.jsx';
 
 import fb from '../../apis/fb.js';
 import * as userApi from '../../apis/user.js';
+import * as seriesApi from '../../apis/series.js';
 
 class SeriesBoxContainer extends React.Component {
 	constructor(props) {
@@ -31,8 +33,14 @@ class SeriesBoxContainer extends React.Component {
 			},
 			showDialogModals: {
 				showSaveSeries: false,
+				canNotUpdateStatus: false,
 			},
-			seriesOwnerProfile: null
+			seriesOwnerProfile: null,
+			series: {
+				_id: '',
+				public: false,
+				items: []
+			}
 		};
 		this.getSeries = this.getSeries.bind(this);
 	}
@@ -47,11 +55,24 @@ class SeriesBoxContainer extends React.Component {
 		}
 	}
 	componentWillReceiveProps(nextProps) {
-		const { actions, params } = this.props;
-		const { series } = nextProps.state;
-		if(!series._id) {
-			this.getSeries();
+		const { params } = this.props;
+		const { user } = nextProps.state;
+		const { series, seriesOwnerProfile } = this.state;
+		if ( (!params.userId) && (!user.myProfile) ) {
+			this.setState({
+				series: {
+					_id: '',
+					items: [],
+					public: false
+				},
+				seriesOwnerProfile: null
+			})
+			return;
 		}
+		this.getSeries();
+	}
+	cloneJsonItem(item) {
+		return JSON.parse(JSON.stringify(item));
 	}
 	switchInputModal(modal) {
 		let { showInputModals } = this.state;
@@ -93,13 +114,12 @@ class SeriesBoxContainer extends React.Component {
 	}
 	getSeries() {
 		const self = this;
-		const { actions, params } = self.props;
+		const { params } = self.props;
 
 		fb.checkLogin()
 			.then((res) => {
 				let isLogin = res.status==='connected'?true:false;
 				if (!isLogin && !params.userId) {
-					throw new Error('You must log in');
 				} else if (isLogin && !params.userId) {
 					return userApi.getUser(res.authResponse.userID);
 				} else {
@@ -110,53 +130,78 @@ class SeriesBoxContainer extends React.Component {
 				self.setState({
 					seriesOwnerProfile: res
 				});
-				actions.querySeries(res._id);
+				return seriesApi.getSeries(res._id);
+			})
+			.then((res) => {
+				res.items = JSON.parse(res.items);
+				this.setState({
+					series: res
+				});
 			})
 			.catch((err) => {
 				console.log(err);
 			});
 	}
-	addSeries(newSeries) {
-		const { actions } = this.props;
-		const { series } = this.props.state;
+	addSeries(series, newSeries) {
+		series = this.cloneJsonItem(series);
 		series.items.push({
 			title: newSeries.title,
 			link: newSeries.link,
 			_id: this.generateId(),
-			status: 0,
+			status: 1,
 			items: [{
-				status: 2,
+				status: 1,
 				items: [{
-					status: 2
+					status: 1
 				}]
 			}]
 		});
-		actions.updateSeriesOptimistic(series);
+		this.setState({
+			series: series
+		})
 	}
-	saveSeries() {
-		const { actions } = this.props;
-		const { series, user } = this.props.state;
-		actions.updateSeries(series);
+	saveSeries(series) {
+		const self = this;
+		series = this.cloneJsonItem(series);
+		series.items = JSON.stringify(series.items);
+		seriesApi.updateSeries(series)
+			.then((res) => {
+				res.items = JSON.parse(res.items);
+				self.setState({
+					series: res
+				});
+			});
 	}
-	updateSeries(newSeries) {
-		const { actions } = this.props;
-		const { series } = this.props.state;
+	updateSeries(series,  newSeries) {
+		series = this.cloneJsonItem(series);
 		const { editSeriesParams } = this.state;
 		const { seriesIndex } = editSeriesParams;
 		for (let key in newSeries) {
 			series.items[seriesIndex][key] = newSeries[key];
 		}
-		actions.updateSeriesOptimistic(series);
+		this.setState({
+			series: series
+		})
 	}
-	updateSeriesStatus(index) {
-		const { actions } = this.props;
-		const { series } = this.props.state;
-		series.items[index].status = (series.items[index].status + 1) % 3;
-		actions.updateSeriesOptimistic(series);
+	updateSeriesStatus(series, index) {
+		series = this.cloneJsonItem(series);
+		const currentLastSeasonIndex = series.items[index].items.length - 1;
+		const currentLastSeason = series.items[index].items[currentLastSeasonIndex];
+
+		series.items[index].status = (series.items[index].status + 1) % 2;
+
+		if (currentLastSeason.status !==series.items[index].status) {
+			this.updateSeasonStatus(series, index, currentLastSeasonIndex);
+		} else {
+			this.setState({
+				series: series
+			})
+		}
 	}
 	resetSeries () {
-		const { actions } = this.props;
-		const { series, user } = this.props.state;
+		const self = this;
+		const { series } = self.state;
+		const { user } = self.props.state;
 		fb.checkLogin()
 			.then((res) => {
 				if (res.status !== 'connected')  {
@@ -165,76 +210,157 @@ class SeriesBoxContainer extends React.Component {
 				if (user.myProfile._id !== series._id) {
 					throw new Error('You don\'s have right to reset this series');
 				}
-				actions.querySeries(user.myProfile._id);
+				seriesApi.getSeries(series._id)
+					.then((res) => {
+						res.items = JSON.parse(res.items);
+						self.setState({
+							series: res
+						});
+					});
 			})
 			.catch((err) => {
 				console.log(err);
 			});
 	}
-	deleteSeries(index) {
-		const { actions } = this.props;
-		const { series } = this.props.state;
-		series.items.splice(index, 1);
-	}
-	addSeason(index) {
-		const { actions } = this.props;
-		const { series } = this.props.state;
+	addSeason(series, index) {
+		series = this.cloneJsonItem(series);
+		const currentLastSeasonIndex = series.items[index].items.length - 1;
+		const currentLastSeason = series.items[index].items[currentLastSeasonIndex];
 		series.items[index].items.push({
-			status: 2,
+			status: 1,
 			items: [{
-				status: 2
+				status: 1
 			}]
 		});
-		actions.updateSeriesOptimistic(series);
+		if (series.items[index].status === 0) {
+			series.items[index].status = 1;
+		} 
+
+		if (currentLastSeason.status === 1) {
+			this.updateSeasonStatus(series, index, currentLastSeasonIndex);
+		} else {
+			this.setState({
+				series: series
+			})
+		}
 	}
-	updateSeason(newSeason) {
-		const { actions } = this.props;
-		const { series } = this.props.state;
+	updateSeason(series, newSeason) {
+		series = this.cloneJsonItem(series);
 		const { editSeasonParams } = this.state;
 		const { seriesIndex, seasonIndex } = editSeasonParams;
 		for (let key in newSeason) {
 			series.items[seriesIndex].items[seasonIndex][key] = newSeason[key];
 		}
-		actions.updateSeriesOptimistic(series);
+		this.setState({
+			series: series
+		})
 	}
-	updateSeasonStatus(index, seasonIndex) {
-		fb.getMyProfile();
-		const { actions } = this.props;
-		const { series } = this.props.state;
-		series.items[index].items[seasonIndex].status = (series.items[index].items[seasonIndex].status + 1) % 3;
-		actions.updateSeriesOptimistic(series);
+	updateSeasonStatus(series, index, seasonIndex, newStatus) {
+		series = this.cloneJsonItem(series);
+		const { showDialogModals } = this.state;
+		const currentLastSeasonIndex = series.items[index].items.length - 1;
+		const currentLastSeason = series.items[index].items[currentLastSeasonIndex];
+		const targetSeason = series.items[index].items[seasonIndex];
+		const currentLastEpIndex = series.items[index].items[seasonIndex].items.length - 1;
+		const currentLastEp = series.items[index].items[seasonIndex].items[currentLastEpIndex];
+		targetSeason.status = (targetSeason.status + 1) % 2;
+
+		if (currentLastSeason.status !== series.items[index].status) {
+			series.items[index].status = currentLastSeason.status;
+		} 
+
+		if (currentLastSeasonIndex !== seasonIndex && targetSeason.status !==0) {
+			showDialogModals.canNotUpdateStatus = true;
+			this.setState({
+				showDialogModals: showDialogModals
+			});
+		} else if (targetSeason.status !== currentLastEp.status) {
+			this.updateEpStatus(series, index, seasonIndex, currentLastEpIndex, targetSeason.status);
+		} else {
+			this.setState({
+				series: series
+			})
+		}
 	}
-	deleteSeason(index) {
-		const { actions } = this.props;
-		const { series } = this.props.state;
+	deleteSeason(series, index) {
+		series = this.cloneJsonItem(series);
 		if (series.items[index].items.length === 1) {
 			return;
 		}
 		series.items[index].items.splice(series.items[index].items.length - 1, 1);
-		actions.updateSeriesOptimistic(series);
+
+		if (series.items[index].status === 1) {
+			series.items[index].status = 0;
+			this.setState({
+				series: series
+			})
+		} else {
+			this.setState({
+				series: series
+			})
+		}
 	}
-	addEp(index, seasonIndex) {
-		const { actions } = this.props;
-		const { series } = this.props.state;
-		series.items[index].items[seasonIndex].items.push({
-			status: 2
-		});
-		actions.updateSeriesOptimistic(series);
+	addEp(series, index, seasonIndex, newStatus) {
+		series = this.cloneJsonItem(series);
+		const targetSeason = series.items[index].items[seasonIndex];
+		const currentLastEpIndex = targetSeason.items.length - 1;
+		const currentLastSeasonIndex = series.items[index].items.length - 1;
+		series.items[index].items[seasonIndex].items[currentLastEpIndex].status = 0;
+		if (targetSeason.status === 0) {
+			if (currentLastSeasonIndex !== seasonIndex) {
+				series.items[index].items[seasonIndex].items.push({
+					status: 0
+				});
+				this.setState({
+					series: series
+				})
+			} else {
+				series.items[index].items[seasonIndex].items.push({
+					status: 1
+				});
+				this.updateSeasonStatus(series, index, seasonIndex);
+			}
+		} else {
+			series.items[index].items[seasonIndex].items.push({
+				status: 1
+			});
+			this.setState({
+				series: series
+			})
+		}
 	}
-	updateEpStatus(index, seasonIndex, epIndex) {
-		const { actions } = this.props;
-		const { series } = this.props.state;
-		series.items[index].items[seasonIndex].items[epIndex].status = (series.items[index].items[seasonIndex].items[epIndex].status + 1) % 3;
-		actions.updateSeriesOptimistic(series);
+	updateEpStatus(series, index, seasonIndex, epIndex, newStatus) {
+		series = this.cloneJsonItem(series);
+		let targetSeason = series.items[index].items[seasonIndex];
+		const targetEp = targetSeason.items[epIndex];
+		targetEp.status = (targetEp.status + 1) % 2;
+		if (epIndex !== targetSeason.items.length -1) {
+		} else {
+			if (targetSeason.status !== targetEp.status) {
+				this.updateSeasonStatus(series, index, seasonIndex);
+			} else {
+				this.setState({
+					series: series
+				})
+			}
+		}
 	}
-	deleteEp(index, seasonIndex) {
-		const { actions } = this.props;
-		const { series } = this.props.state;
+	deleteEp(series, index, seasonIndex) {
+		series = this.cloneJsonItem(series);
+		let targetSeason = series.items[index].items[seasonIndex];
+
 		if (series.items[index].items[seasonIndex].items.length === 1) {
 			return;
 		}
 		series.items[index].items[seasonIndex].items.splice(series.items[index].items[seasonIndex].items.length - 1, 1);
-		actions.updateSeriesOptimistic(series);
+
+		if (targetSeason.status === 1) {
+			this.updateSeasonStatus(series, index, seasonIndex);
+		} else {
+			this.setState({
+				series: series
+			})
+		}
 	}
 	generateId() {
 		let timestamp = (new Date().getTime() / 1000 | 0).toString(16);
@@ -244,8 +370,8 @@ class SeriesBoxContainer extends React.Component {
 	}
 	render () {
 		const self = this;
-		const { series, user } = self.props.state;
-		const { seriesOwnerProfile, showInputModals, editSeriesParams, editSeasonParams, showDialogModals } = self.state;
+		let { user } = self.props.state;
+		const { series, seriesOwnerProfile, showInputModals, editSeriesParams, editSeasonParams, showDialogModals } = self.state;
 		const style = require('./SeriesBoxContainer.scss');
 		const seriesHelper = require('./SeriesHelper.png');
 		const currentUserId = user.myProfile?user.myProfile._id:'';
@@ -253,10 +379,14 @@ class SeriesBoxContainer extends React.Component {
 		const seriesTitleFont = seriesOwnerName?(seriesOwnerName + '\'s Series'):'';
 		const seriesOwnerPictureElement = seriesOwnerPicture?<img src={seriesOwnerPicture} />:null;
 		const hasEditRight = currentUserId===seriesOwnerId?true:false;
+		// console.log(series);
 
 		return (
 			<div className={style.outsider}>
-				<div className={style.seriesBoxContainer}>
+				<div className={series._id?style.invisible:style.pleasLoginContainer}>
+					<div className={style.loginMessage}>請登入以繼續</div>
+				</div>
+				<div className={series._id?style.seriesBoxContainer:style.invisible}>
 					<figure>
 						{seriesOwnerPictureElement}
 					</figure>
@@ -266,13 +396,13 @@ class SeriesBoxContainer extends React.Component {
 					<div className={currentUserId===seriesOwnerId?'':style.invisible}>
 						<div className={style.functionBar}>
 							<span className={style.mainFuncIcon + ' ' + style.redGradient} onClick={self.switchInputModal.bind(self, 'showAddSeries')}>
-								<b>Add</b>
+								<b>新增項目</b>
 							</span>
 							<span className={style.mainFuncIcon + ' ' + style.orangeGradient} onClick={self.switchDialogModal.bind(self, 'showSaveSeries')}>
-								<b>Save</b>
+								<b>儲存</b>
 							</span>
 							<span className={style.mainFuncIcon + ' ' + style.greenGradient} onClick={self.resetSeries.bind(self)}>
-								<b>Reset</b>
+								<b>重置</b>
 							</span>
 						</div>
 					</div>
@@ -286,9 +416,9 @@ class SeriesBoxContainer extends React.Component {
 											prewords={null}
 											childNumberPrewords={'S'}
 											childNumber={seriesItem.items.length}
-											updateStatusFunc={self.updateSeriesStatus.bind(self, index)}
-											addItemFunc={self.addSeason.bind(self, index)}
-											deleteItemFunc={self.deleteSeason.bind(self, index)}
+											updateStatusFunc={self.updateSeriesStatus.bind(self, series, index)}
+											addItemFunc={self.addSeason.bind(self, series, index)}
+											deleteItemFunc={self.deleteSeason.bind(self, series, index)}
 											clickEditFunc={self.clickSereisEdit.bind(self, 'showEditSeries', index, seriesItem)}
 											displayStyle={'block'}
 											editable={hasEditRight}
@@ -303,9 +433,9 @@ class SeriesBoxContainer extends React.Component {
 															childNumberPrewords={'EP'}
 															childNumber={seasonItem.items.length}
 															order={seasonIndex}
-															updateStatusFunc={self.updateSeasonStatus.bind(self, index, seasonIndex)}
-															addItemFunc={self.addEp.bind(self, index, seasonIndex)}
-															deleteItemFunc={self.deleteEp.bind(self, index, seasonIndex)}
+															updateStatusFunc={self.updateSeasonStatus.bind(self, series, index, seasonIndex)}
+															addItemFunc={self.addEp.bind(self, series, index, seasonIndex)}
+															deleteItemFunc={self.deleteEp.bind(self, series, index, seasonIndex)}
 															clickEditFunc={self.clickSeasonEdit.bind(self, 'showEditSeason', index, seasonIndex, seriesItem)}
 															displayStyle={'block'}
 															editable={hasEditRight}
@@ -318,7 +448,7 @@ class SeriesBoxContainer extends React.Component {
 																			item={epItem}
 																			prewords={''}
 																			order={epIndex}
-																			updateStatusFunc={self.updateEpStatus.bind(self, index, seasonIndex, epIndex)}
+																			updateStatusFunc={self.updateEpStatus.bind(self, series, index, seasonIndex, epIndex)}
 																			displayStyle={'inline-flex'}
 																			editable={hasEditRight}
 																		/>
@@ -338,31 +468,38 @@ class SeriesBoxContainer extends React.Component {
 					<DialogModal
 						showModal={showDialogModals.showSaveSeries}
 						switchShowFunc={self.switchDialogModal.bind(self, 'showSaveSeries')}
-						submitFunc={self.saveSeries.bind(self)}
-						title={'Do you want to save?'}
+						submitFunc={self.saveSeries.bind(self, series)}
+						title={'您確定要儲存嗎?'}
 						elementId={'showSaveSeriesDialog'}
+					/>
+					<DialogModal
+						showModal={showDialogModals.canNotUpdateStatus}
+						switchShowFunc={self.switchDialogModal.bind(self, 'canNotUpdateStatus')}
+						submitFunc={self.saveSeries.bind(self, series)}
+						title={'因為您已經更新的一季在追蹤，因此無法更動此季狀態'}
+						elementId={'canNotUpdateStatusDialog'}
 					/>
 					<InputModal
 						showModal={showInputModals.showAddSeries}
 						switchShowFunc={self.switchInputModal.bind(self, 'showAddSeries')}
-						submitFunc={self.addSeries.bind(self)}
-						title={'Create New Series'}
+						submitFunc={self.addSeries.bind(self, series)}
+						title={'新增影集'}
 						params={[{title: 'title', value: ''}, {title: 'link', value: ''}]}
 						elementId={'addSeriesModal'}
 					/>
 					<InputModal
 						showModal={showInputModals.showEditSeries}
 						switchShowFunc={self.switchInputModal.bind(self, 'showEditSeries')}
-						submitFunc={self.updateSeries.bind(self)}
-						title={'Edit Series'}
+						submitFunc={self.updateSeries.bind(self, series)}
+						title={'編輯影集資訊'}
 						params={[{title: 'title', value: editSeriesParams.item.title}, {title: 'link', value: editSeriesParams.item.link}]}
 						elementId={'editSeriesModal'}
 					/>
 					<InputModal
 						showModal={showInputModals.showEditSeason}
 						switchShowFunc={self.switchInputModal.bind(self, 'showEditSeason')}
-						submitFunc={self.updateSeason.bind(self)}
-						title={'Edit Season'}
+						submitFunc={self.updateSeason.bind(self, series)}
+						title={'編輯該季資訊'}
 						params={[{title: 'link', value: editSeasonParams.item.link}]}
 						elementId={'editSeasonModal'}
 					/>
