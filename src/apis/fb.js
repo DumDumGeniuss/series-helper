@@ -43,7 +43,7 @@ const fb = {
 				if(fbResponse.authResponse) {
 					user._id = fbResponse.authResponse.userID;
 					/* Save tokens */
-					localStorage.setItem("authToken", fbResponse.authResponse.authToken);
+					localStorage.setItem("authToken", fbResponse.authResponse.accessToken);
 					userApi.updateUser(user);
 					resolve(fbResponse);
 				} else {
