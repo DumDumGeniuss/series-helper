@@ -8,6 +8,7 @@ import ItemsBox from '../../components/box/ItemsBox/ItemsBox.jsx';
 import InputModal from '../../components/modal/InputModal/InputModal.jsx';
 import DialogModal from '../../components/modal/DialogModal/DialogModal.jsx';
 import LoginButtonContainer from '../../containers/LoginButtonContainer/LoginButtonContainer.jsx';
+import LoadingBox from '../../components/box/LoadingBox/LoadingBox.jsx';
 
 import fb from '../../apis/fb.js';
 import * as userApi from '../../apis/user.js';
@@ -40,7 +41,8 @@ class SeriesBoxContainer extends React.Component {
 				_id: '',
 				public: false,
 				items: []
-			}
+			},
+			isLoading: false
 		};
 		this.getSeries = this.getSeries.bind(this);
 	}
@@ -119,10 +121,18 @@ class SeriesBoxContainer extends React.Component {
 		fb.checkLogin()
 			.then((res) => {
 				let isLogin = res.status==='connected'?true:false;
+
 				if (!isLogin && !params.userId) {
+
 				} else if (isLogin && !params.userId) {
+					this.setState({
+						isLoading: true
+					});
 					return userApi.getUser(res.authResponse.userID);
 				} else {
+					this.setState({
+						isLoading: true
+					});
 					return userApi.getUser(params.userId);
 				}
 			})
@@ -135,7 +145,8 @@ class SeriesBoxContainer extends React.Component {
 			.then((res) => {
 				res.items = JSON.parse(res.items);
 				this.setState({
-					series: res
+					series: res,
+					isLoading: false
 				});
 			})
 			.catch((err) => {
@@ -202,14 +213,6 @@ class SeriesBoxContainer extends React.Component {
 		const self = this;
 		const { series } = self.state;
 		const { user } = self.props.state;
-		// fb.checkLogin()
-		// 	.then((res) => {
-		// 		if (res.status !== 'connected')  {
-		// 			throw new Error('You are not logged in');
-		// 		}
-		// 		if (user.myProfile._id !== series._id) {
-		// 			throw new Error('You don\'s have right to reset this series');
-		// 		}
 		seriesApi.getSeries(series._id)
 			.then((res) => {
 				res.items = JSON.parse(res.items);
@@ -220,10 +223,6 @@ class SeriesBoxContainer extends React.Component {
 			.catch((err) => {
 				console.log(err);
 			});
-			// })
-			// .catch((err) => {
-			// 	console.log(err);
-			// });
 	}
 	addSeason(series, index) {
 		series = this.cloneJsonItem(series);
@@ -374,7 +373,7 @@ class SeriesBoxContainer extends React.Component {
 	render () {
 		const self = this;
 		let { user } = self.props.state;
-		const { series, seriesOwnerProfile, showInputModals, editSeriesParams, editSeasonParams, showDialogModals } = self.state;
+		const { isLoading, series, seriesOwnerProfile, showInputModals, editSeriesParams, editSeasonParams, showDialogModals } = self.state;
 		const style = require('./SeriesBoxContainer.scss');
 		const seriesHelper = require('./SeriesHelper.png');
 		const currentUserId = user.myProfile?user.myProfile._id:'';
@@ -382,12 +381,12 @@ class SeriesBoxContainer extends React.Component {
 		const seriesTitleFont = seriesOwnerName?(seriesOwnerName + '\'s Series'):'';
 		const seriesOwnerPictureElement = seriesOwnerPicture?<img src={seriesOwnerPicture} />:null;
 		const hasEditRight = currentUserId===seriesOwnerId?true:false;
-		// console.log(series);
 
 		return (
 			<div className={style.outsider}>
 				<div className={series._id?style.invisible:style.pleasLoginContainer}>
-					<div className={style.loginMessage}>請登入以繼續</div>
+					<div className={isLoading?style.invisible:style.loginMessage}>請登入以繼續</div>
+					<LoadingBox boxWidth={35} boxHeight={35} visible={isLoading} color={'#024e80'}/>
 				</div>
 				<div className={series._id?style.seriesBoxContainer:style.invisible}>
 					<figure>
