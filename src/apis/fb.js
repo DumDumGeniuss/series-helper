@@ -20,18 +20,12 @@ const fb = {
 		let fbResponse;
 		return new Promise((resolve, reject) => {
 			FB.login(function(response) {
-				console.log(response);
 				if (response.status === 'connected') {
 					fbResponse = response;
-					user._id = fbResponse.authResponse.userID;
-					user.authToken = fbResponse.authResponse.accessToken;
+					fbResponse._id = fbResponse.authResponse.userID;
 					/* Save tokens */
-					localStorage.setItem("authToken", user.authToken);
-
-					userApi.updateUser(user)
-						.then((res)=> {
-							resolve(fbResponse);
-						});
+					localStorage.setItem("authToken", fbResponse.authResponse.accessToken);
+					resolve(fbResponse);
 				} else if (response.status === 'not_authorized') {
 					reject('Log in with facebook failed');
 				} else {
@@ -48,14 +42,10 @@ const fb = {
 				fbResponse = response
 				if(fbResponse.authResponse) {
 					user._id = fbResponse.authResponse.userID;
-					user.authToken = fbResponse.authResponse.accessToken;
 					/* Save tokens */
 					localStorage.setItem("authToken", user.authToken);
-	
-					userApi.updateUser(user)
-						.then((res)=> {
-							resolve(fbResponse);
-						});
+					userApi.updateUser(user);
+					resolve(fbResponse);
 				} else {
 					resolve(fbResponse);
 				}

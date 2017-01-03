@@ -33,7 +33,8 @@ class LoginButtonContainer extends React.Component {
 	}
 	checkFbLogin() {
 		const { actions } = this.props;
-		let user;
+		const { user } = this.props.state;
+		let userToUpdate;
 		fb.checkLogin()
 			.then((res) => {
 				if(res.status!=='connected') {
@@ -42,12 +43,12 @@ class LoginButtonContainer extends React.Component {
 				return fb.getMyProfile();
 			})
 			.then((res) => {
-				user = res;
-				return fb.getUerPhoto(user._id);
+				userToUpdate = res;
+				return fb.getUerPhoto(userToUpdate._id);
 			})
 			.then((res) => {
-				user.picture = res;
-				actions.setMyProfile(user);
+				userToUpdate.picture = res;
+				actions.setMyProfile(userToUpdate);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -63,7 +64,6 @@ class LoginButtonContainer extends React.Component {
 		fb.login()
 			.then((res) => {
 				return fb.getMyProfile();
-				// actions.setMyProfile();
 			})
 			.then((res) => {
 				user = res;

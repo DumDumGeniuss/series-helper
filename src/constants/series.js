@@ -1,3 +1,0 @@
-export const UPDATE_SERIES = 'UPDATE_SERIES';
-export const QUERY_SERIES = 'QUERY_SERIES';
-export const CLEAR_SERIES = 'CLEAR_SERIES';

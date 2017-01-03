@@ -5,7 +5,9 @@
   "scripts": {
     "eslint": "better-npm-run eslint",
     "start:dev": "better-npm-run start:dev",
-    "start:prod": "better-npm-run start:prod"
+    "build": "better-npm-run build",
+    "start:prod": "better-npm-run start:prod",
+    "start:build": "better-npm-run start:build"
   },
   "betterScripts": {
     "eslint": {
@@ -17,8 +19,20 @@
         "NODE_ENV": "development"
       }
     },
-    "start:prod": {
+    "start:build": {
       "command": "webpack --config tools/webpack.prod.config.js && babel-node src/server.js",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "build": {
+      "command": "webpack --config tools/webpack.prod.config.js",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "start:prod": {
+      "command": "babel-node src/server.js",
       "env": {
         "NODE_ENV": "production"
       }

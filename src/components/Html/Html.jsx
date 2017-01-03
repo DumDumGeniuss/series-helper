@@ -20,7 +20,7 @@ const css = `
 
 	@media screen and (max-width: 500px) {
 		body {
-			font-size: 25%;
+			font-size: 40%;
 		}
 	}
 `;
@@ -36,10 +36,6 @@ const fbScript = `
     version    : 'v2.8' // use graph api version 2.8
   });
 
-  FB.getLoginStatus(function(response) {
-  	console.log(response);
-  	console.log(new Date());
-  });
   IS_FB_API_LOADED = true;
 
   var event = new CustomEvent("fb-api-loaded", { "detail": "FB api loaded!!" });
@@ -54,14 +50,6 @@ const fbScript = `
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
 
-  function testAPI() {
-    console.log('Welcome!  Fetching your information.... ');
-    FB.api('/me', function(response) {
-      console.log('Successful login for: ' + response.name);
-      document.getElementById('status').innerHTML =
-        'Thanks for logging in, ' + response.name + '!';
-    });
-  }
 </script>
 `;
 

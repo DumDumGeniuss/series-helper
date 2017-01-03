@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import * as seriesActions from '../../actions/series.js';
+// import * as seriesActions from '../../actions/series.js';
 
 import ItemsBox from '../../components/box/ItemsBox/ItemsBox.jsx';
 import InputModal from '../../components/modal/InputModal/InputModal.jsx';
@@ -202,25 +202,28 @@ class SeriesBoxContainer extends React.Component {
 		const self = this;
 		const { series } = self.state;
 		const { user } = self.props.state;
-		fb.checkLogin()
+		// fb.checkLogin()
+		// 	.then((res) => {
+		// 		if (res.status !== 'connected')  {
+		// 			throw new Error('You are not logged in');
+		// 		}
+		// 		if (user.myProfile._id !== series._id) {
+		// 			throw new Error('You don\'s have right to reset this series');
+		// 		}
+		seriesApi.getSeries(series._id)
 			.then((res) => {
-				if (res.status !== 'connected')  {
-					throw new Error('You are not logged in');
-				}
-				if (user.myProfile._id !== series._id) {
-					throw new Error('You don\'s have right to reset this series');
-				}
-				seriesApi.getSeries(series._id)
-					.then((res) => {
-						res.items = JSON.parse(res.items);
-						self.setState({
-							series: res
-						});
-					});
+				res.items = JSON.parse(res.items);
+				self.setState({
+					series: res
+				});
 			})
 			.catch((err) => {
 				console.log(err);
 			});
+			// })
+			// .catch((err) => {
+			// 	console.log(err);
+			// });
 	}
 	addSeason(series, index) {
 		series = this.cloneJsonItem(series);
@@ -518,7 +521,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(seriesActions, dispatch),
+		actions: null,
+		// actions: bindActionCreators(seriesActions, dispatch),
 	};
 }
 
