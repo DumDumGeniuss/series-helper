@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 
 import ItemsBox from '../../components/box/ItemsBox/ItemsBox.jsx';
 import InputModal from '../../components/modal/InputModal/InputModal.jsx';
+import NumberInputModal from '../../components/modal/NumberInputModal/NumberInputModal.jsx';
 import DialogModal from '../../components/modal/DialogModal/DialogModal.jsx';
 import LoginButtonContainer from '../../containers/LoginButtonContainer/LoginButtonContainer.jsx';
 import LoadingBox from '../../components/box/LoadingBox/LoadingBox.jsx';
@@ -32,9 +33,16 @@ class SeriesBoxContainer extends React.Component {
 				seasonIndex: 0,
 				item: {}
 			},
+			editEpNumberParams: {
+				seriesIndex: 0,
+				seasonIndex: 0
+			},
 			showDialogModals: {
 				showSaveSeries: false,
 				canNotUpdateStatus: false,
+			},
+			showNumberInputModals: {
+				showEpNumberInput: false,
 			},
 			seriesOwnerProfile: null,
 			series: {
@@ -42,7 +50,9 @@ class SeriesBoxContainer extends React.Component {
 				public: false,
 				items: []
 			},
-			isLoading: false
+			isLoading: false,
+			isSaving: false,
+			isResetting: false,
 		};
 		this.getSeries = this.getSeries.bind(this);
 	}
@@ -76,6 +86,13 @@ class SeriesBoxContainer extends React.Component {
 	cloneJsonItem(item) {
 		return JSON.parse(JSON.stringify(item));
 	}
+	switchNumberInputModal(modal) {
+		let { showNumberInputModals } = this.state;
+		showNumberInputModals[modal] = !showNumberInputModals[modal];
+		this.setState({
+			showNumberInputModals: showNumberInputModals,
+		});
+	}
 	switchInputModal(modal) {
 		let { showInputModals } = this.state;
 		showInputModals[modal] = !showInputModals[modal];
@@ -104,6 +121,7 @@ class SeriesBoxContainer extends React.Component {
 	}
 	clickSeasonEdit(modal, seriesIndex, seasonIndex, seasonItem) {
 		let { editSeasonParams } = this.state;
+		console.log(seasonItem);
 		this.switchInputModal(modal);
 		editSeasonParams.seriesIndex = seriesIndex;
 		editSeasonParams.seasonIndex = seasonIndex;
@@ -113,6 +131,12 @@ class SeriesBoxContainer extends React.Component {
 		this.setState({
 			editSeasonParams: editSeasonParams,
 		});
+	}
+	clickInputEpNumber(modal, seriesIndex, seasonIndex) {
+		let { editEpNumberParams } = this.state;
+		this.switchNumberInputModal(modal);
+		editEpNumberParams.seriesIndex = seriesIndex;
+		editEpNumberParams.seasonIndex = seasonIndex;
 	}
 	getSeries() {
 		const self = this;
@@ -172,14 +196,19 @@ class SeriesBoxContainer extends React.Component {
 		})
 	}
 	saveSeries(series) {
+		console.log(series);
 		const self = this;
 		series = this.cloneJsonItem(series);
 		series.items = JSON.stringify(series.items);
+		self.setState({
+			isSaving: true
+		});
 		seriesApi.updateSeries(series)
 			.then((res) => {
 				res.items = JSON.parse(res.items);
 				self.setState({
-					series: res
+					series: res,
+					isSaving: false
 				});
 			});
 	}
@@ -213,11 +242,15 @@ class SeriesBoxContainer extends React.Component {
 		const self = this;
 		const { series } = self.state;
 		const { user } = self.props.state;
+		self.setState({
+			isResetting: true
+		});
 		seriesApi.getSeries(series._id)
 			.then((res) => {
 				res.items = JSON.parse(res.items);
 				self.setState({
-					series: res
+					series: res,
+					isResetting: false
 				});
 			})
 			.catch((err) => {
@@ -248,11 +281,13 @@ class SeriesBoxContainer extends React.Component {
 	}
 	updateSeason(series, newSeason) {
 		series = this.cloneJsonItem(series);
+		console.log(series);
 		const { editSeasonParams } = this.state;
 		const { seriesIndex, seasonIndex } = editSeasonParams;
 		for (let key in newSeason) {
 			series.items[seriesIndex].items[seasonIndex][key] = newSeason[key];
 		}
+		console.log(series);
 		this.setState({
 			series: series
 		})
@@ -302,7 +337,7 @@ class SeriesBoxContainer extends React.Component {
 			})
 		}
 	}
-	addEp(series, index, seasonIndex, newStatus) {
+	addEp(series, index, seasonIndex, newStatus, counts) {
 		series = this.cloneJsonItem(series);
 		const targetSeason = series.items[index].items[seasonIndex];
 		const currentLastEpIndex = targetSeason.items.length - 1;
@@ -310,22 +345,49 @@ class SeriesBoxContainer extends React.Component {
 		series.items[index].items[seasonIndex].items[currentLastEpIndex].status = 0;
 		if (targetSeason.status === 0) {
 			if (currentLastSeasonIndex !== seasonIndex) {
-				series.items[index].items[seasonIndex].items.push({
-					status: 0
-				});
+				if (typeof counts === 'number') {
+					series.items[index].items[seasonIndex].items = [];
+					for (let i = 0; i < counts; i++) {
+						series.items[index].items[seasonIndex].items.push({
+							status: 0
+						});	
+					}
+				} else {
+					series.items[index].items[seasonIndex].items.push({
+						status: 0
+					});
+				}
 				this.setState({
 					series: series
 				})
 			} else {
-				series.items[index].items[seasonIndex].items.push({
-					status: 1
-				});
+				if (typeof counts === 'number') {
+					series.items[index].items[seasonIndex].items = [];
+					for (let i = 0; i < counts; i++) {
+						series.items[index].items[seasonIndex].items.push({
+							status: (i === counts - 1)?1:0
+						});	
+					}
+				} else {
+					series.items[index].items[seasonIndex].items.push({
+						status: 1
+					});
+				}
 				this.updateSeasonStatus(series, index, seasonIndex);
 			}
 		} else {
-			series.items[index].items[seasonIndex].items.push({
-				status: 1
-			});
+			if (typeof counts === 'number') {
+				series.items[index].items[seasonIndex].items = [];
+				for (let i = 0; i < counts; i++) {
+					series.items[index].items[seasonIndex].items.push({
+						status: (i === counts - 1)?1:0
+					});	
+				}
+			} else {
+				series.items[index].items[seasonIndex].items.push({
+					status: 1
+				});
+			}
 			this.setState({
 				series: series
 			})
@@ -365,15 +427,15 @@ class SeriesBoxContainer extends React.Component {
 		}
 	}
 	generateId() {
-		let timestamp = (new Date().getTime() / 1000 | 0).toString(16);
-		return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, () => {
+		let timestamp = (new Date().getTime() / 1000 | 0).toString(4);
+		return timestamp + 'xxxx'.replace(/[x]/g, () => {
 			return (Math.random() * 16 | 0).toString(16);
 		}).toLowerCase();
 	}
 	render () {
 		const self = this;
 		let { user } = self.props.state;
-		const { isLoading, series, seriesOwnerProfile, showInputModals, editSeriesParams, editSeasonParams, showDialogModals } = self.state;
+		const { isLoading, isSaving, isResetting, series, seriesOwnerProfile, showInputModals, showNumberInputModals, editSeriesParams, editSeasonParams, editEpNumberParams, showDialogModals } = self.state;
 		const style = require('./SeriesBoxContainer.scss');
 		const seriesHelper = require('./SeriesHelper.png');
 		const currentUserId = user.myProfile?user.myProfile._id:'';
@@ -398,13 +460,15 @@ class SeriesBoxContainer extends React.Component {
 					<div className={currentUserId===seriesOwnerId?'':style.invisible}>
 						<div className={style.functionBar}>
 							<span className={style.mainFuncIcon + ' ' + style.redGradient} onClick={self.switchInputModal.bind(self, 'showAddSeries')}>
-								<b>新增項目</b>
+								<b>新增影集</b>
 							</span>
 							<span className={style.mainFuncIcon + ' ' + style.orangeGradient} onClick={self.switchDialogModal.bind(self, 'showSaveSeries')}>
-								<b>儲存</b>
+								<b className={isSaving?style.invisible:''}>儲存</b>
+								<LoadingBox boxWidth={35} boxHeight={35} visible={isSaving} color={'white'}/>
 							</span>
 							<span className={style.mainFuncIcon + ' ' + style.greenGradient} onClick={self.resetSeries.bind(self)}>
-								<b>重置</b>
+								<b className={isResetting?style.invisible:''}>重置</b>
+								<LoadingBox boxWidth={35} boxHeight={35} visible={isResetting} color={'white'}/>
 							</span>
 						</div>
 					</div>
@@ -439,6 +503,7 @@ class SeriesBoxContainer extends React.Component {
 															addItemFunc={self.addEp.bind(self, series, index, seasonIndex)}
 															deleteItemFunc={self.deleteEp.bind(self, series, index, seasonIndex)}
 															clickEditFunc={self.clickSeasonEdit.bind(self, 'showEditSeason', index, seasonIndex, seriesItem)}
+															clickInputNumberFunc={self.clickInputEpNumber.bind(self, 'showEpNumberInput', index, seasonIndex)}
 															displayStyle={'block'}
 															editable={hasEditRight}
 														>
@@ -467,6 +532,13 @@ class SeriesBoxContainer extends React.Component {
 							})
 						}
 					</div>
+					<NumberInputModal
+						showModal={showNumberInputModals.showEpNumberInput}
+						switchShowFunc={self.switchNumberInputModal.bind(self, 'showEpNumberInput')}
+						submitFunc={self.addEp.bind(self, series, editEpNumberParams.seriesIndex, editEpNumberParams.seasonIndex, null)}
+						elementId={'epNumberInputModal'}
+						defaultValue={'1'}
+					/>
 					<DialogModal
 						showModal={showDialogModals.showSaveSeries}
 						switchShowFunc={self.switchDialogModal.bind(self, 'showSaveSeries')}
@@ -477,8 +549,8 @@ class SeriesBoxContainer extends React.Component {
 					<DialogModal
 						showModal={showDialogModals.canNotUpdateStatus}
 						switchShowFunc={self.switchDialogModal.bind(self, 'canNotUpdateStatus')}
-						submitFunc={self.saveSeries.bind(self, series)}
-						title={'因為您已經更新的一季在追蹤，因此無法更動此季狀態'}
+						submitFunc={function(){}}
+						title={'因為您已經有新的季數在追蹤，因此無法更動此季狀態，只可對集數做更動'}
 						elementId={'canNotUpdateStatusDialog'}
 					/>
 					<InputModal

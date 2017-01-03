@@ -72,7 +72,9 @@
 	justify-content: center;
 
 	.mainFuncIcon {
-		display: inline-block;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
 		padding: 10px;
 		margin: 5px;
 		color: white;

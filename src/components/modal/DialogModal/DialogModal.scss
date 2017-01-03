@@ -27,8 +27,8 @@
 		left: 50%;
 		top: 50%;
 		transform: translate(-50%, -50%);
-		background-image: linear-gradient(#ff9497, #ff7676);
-		border: 2px solid #ff6e82;
+		background-image: linear-gradient(#4b96c7, #024e80);
+		border: 2px solid #024e80;
 		border-radius: 10px;
 		padding: 20px;
 
@@ -49,6 +49,10 @@
 				color: white;
 				margin: 5px;
 				cursor: pointer;
+			}
+
+			span:hover {
+				color: yellow;
 			}
 		}
 	}

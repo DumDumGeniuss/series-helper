@@ -58,11 +58,14 @@
 		}
 
 		.secondZoneSubTitle {
-			font-size: 3em;
+			font-size: 2.5em;
 			color: white;
 			word-break: break-word;
 			font-family: "jaf-facitweb",-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;
 			text-align: center;
+			b {
+				color: yellow;
+			}
 		}
 
 	}

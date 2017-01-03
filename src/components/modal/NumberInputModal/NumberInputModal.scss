@@ -1,4 +1,4 @@
-.invisibleContainer {
+.invisible {
 	display: none;
 }
 
@@ -22,6 +22,7 @@
 
 	.contentBox {
 		display: inline-block;
+		width: 300px;
 		position: absolute;
 		z-index: 2;
 		left: 50%;
@@ -32,54 +33,56 @@
 		border-radius: 10px;
 		padding: 20px;
 
-		.title {
+		.alert {
+			font-size: 2em;
+			margin: 5px;
 			text-align: center;
-			color: white;
-			font-size: 3em;
+			color: #f5ff00;
 		}
 
-		.functionBar {
-			padding: 10px 0px;
-			display: flex;
-			justify-content: center;
-
-			span {
-				padding: 10px;
-				background-image: linear-gradient(#03A9F4, #1f779e);
-				border-radius: 10px;
-				color: white;
-				margin: 5px;
-				cursor: pointer;
-			}
-			span:hover {
-				color: yellow;
-			}
+		.title {
+			font-size: 3em;
+			margin: 0px;
+			text-align: center;
+			color: white;
 		}
 
 		.inputBox {
 			display: flex;
 			justify-content: center;
 			align-items:center;
-			padding: 5px 0px;
-
-			label {
-				width: 70px;
-				text-align: center;
-				color: white;
-				font-size: 2em;
-			}
-
+			margin: 10px 0px;
 			input {
+				display: inline-block;
 				border-radius: 5px;
-				width: 200px;
 				height: 35px;
+				width: 100px;
 				font-size: 2em;
 			}
 		}
-	}
-}
 
-@keyframes fadeIn {
-	0% {opacity: 0}
-	100% {opacity: 1}
+		.numberBox {
+			display: flex;
+			align-items: cener;
+			justify-content: center;
+			padding: 5px 0px 0px 0px;
+			.number {
+				display: inline-block;
+				width: 60px;
+				height: 60px;
+				border-radius: 10px;
+				border: 2px solid #024e80;
+				background-image: linear-gradient(#4b96c7, #0e659e);
+				line-height: 60px;
+				text-align: center;
+				font-size: 3em;
+				margin: 0px 3px;
+				color: white;
+				cursor: pointer;
+			}
+			.number:hover {
+				color: yellow;
+			}
+		}
+	}
 }

@@ -13,7 +13,7 @@ class HomePage extends React.Component {
 		return (
 			<div className={style.homePageContainer}>
 				<div className={style.firstZone}>
-					<h1 className={style.firstZoneTitle}>The best tool to memorize all your TV show progress，Series Helper!</h1>
+					<h1 className={style.firstZoneTitle}>閒暇時間追劇最佳幫手，Series Helper!</h1>
 					<Link to={'/series'} className={style.logoBoxContainer}>
 						<LogoBox />
 					</Link>
@@ -25,7 +25,7 @@ class HomePage extends React.Component {
 						<img src={functionIndicator1} />
 					</div>
 					<h1 className={style.secondZoneSubTitle}>利用簡易的操作介面管理您所有的追劇進度</h1>
-					<h1 className={style.secondZoneSubTitle}>點選編輯按鈕可以輸入您的影片連結，讓您輕鬆追劇</h1>
+					<h1 className={style.secondZoneSubTitle}>亦可利用編輯新增其他網站<b>首頁</b>連結，方便您輕鬆追劇</h1>
 					<h1 className={style.secondZoneSubTitle}>若您富有創意，您也可以紀錄影集以外的事務</h1>
 					<h1 className={style.secondZoneSubTitle}>無需耗費時間做繁瑣的安裝及註冊程序</h1>
 					<h1 className={style.secondZoneSubTitle}>您只需要瀏覽器跟您的Facebook帳號即可快速登陸使用！</h1>

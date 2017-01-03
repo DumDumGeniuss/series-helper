@@ -5,6 +5,7 @@ import Minus from 'react-icons/lib/fa/minus';
 import Plus from 'react-icons/lib/fa/plus';
 import Film from 'react-icons/lib/fa/film';
 import Edit from 'react-icons/lib/fa/edit';
+import Calculator from 'react-icons/lib/fa/calculator';
 
 class ItemsBox extends React.Component {
 	static get propTypes() {
@@ -17,6 +18,7 @@ class ItemsBox extends React.Component {
 			addItemFunc: React.PropTypes.func,
 			clickEditFunc: React.PropTypes.func,
 			deleteItemFunc: React.PropTypes.func,
+			clickInputNumberFunc: React.PropTypes.func,
 			editable: React.PropTypes.bool,
 		}
 	}
@@ -26,6 +28,42 @@ class ItemsBox extends React.Component {
 			showChild: false,
 		};
 	}
+	shouldComponentUpdate(nextProps, nextState) {
+		const currentProps = this.props;
+		const currentState = this.state;
+		let isChildrenLinkChange = false;
+		let isChildrenNumberChange =false;
+		if (currentProps.children) {
+			for (let i = 0; i < currentProps.children.length; i++) {
+				if (currentProps.children[i] && nextProps.children[i]) {
+					if (currentProps.children[i].props.item.link !== nextProps.children[i].props.item.link) {
+						isChildrenLinkChange = true;
+					}
+				}
+			}
+		}
+		if (currentProps.children) {
+			for (let i = 0; i < currentProps.children.length; i++) {
+				if (currentProps.children[i] && nextProps.children[i]) {
+					if (currentProps.children[i].props.childNumber !== nextProps.children[i].props.childNumber) {
+						isChildrenNumberChange = true;
+					}
+				}
+			}
+		}
+		return (currentProps.item.status !== nextProps.item.status)
+			|| (currentProps.item.link !== nextProps.item.link)
+			|| (currentProps.item.title !== nextProps.item.title)
+			|| (currentState.showChild !== nextState.showChild)
+			|| ((currentProps.children !== undefined) && (currentProps.children.length !== nextProps.children.length))
+			|| isChildrenNumberChange
+			|| isChildrenLinkChange;
+
+	}
+	componentWillReceiveProps(nextProps) {
+	}
+	componentDidUpdate() {
+	}
 	switchChildDisplay() {
 		this.setState({
 			showChild: !this.state.showChild
@@ -33,7 +71,7 @@ class ItemsBox extends React.Component {
 	}
 	render () {
 		const style = require('./ItemsBox.scss');
-		const { item, children, prewords, order, updateStatusFunc, addItemFunc, clickEditFunc, deleteItemFunc, displayStyle, childNumber, childNumberPrewords, editable } = this.props;
+		const { item, children, prewords, order, updateStatusFunc, addItemFunc, clickEditFunc, deleteItemFunc, displayStyle, childNumber, childNumberPrewords, editable, clickInputNumberFunc } = this.props;
 		const { showChild } = this.state;
 		const title = item.title?item.title:(prewords + (order+1));
 		const link = item.link?item.link:null;
@@ -88,6 +126,10 @@ class ItemsBox extends React.Component {
 						<Plus
 							className={editable?style.addItemIcon:style.invisible}
 							onClick={addItemFunc}
+						/>
+						<Calculator
+							className={(editable&&clickInputNumberFunc)?style.minusItemIcon:style.invisible}
+							onClick={clickInputNumberFunc}
 						/>
 					</div>
 					<div className={style.childContainer}>
