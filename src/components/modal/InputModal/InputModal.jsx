@@ -44,7 +44,6 @@ class InputModal extends React.Component {
 	}
 	submit(submitFunc, switchShowFunc) {
 		const { elementId, params } = this.props;
-		console.log(params);
 		let series = {};
 		for(let i = 0; i < params.length; i++) {
 			let input = document.getElementById(elementId + i);

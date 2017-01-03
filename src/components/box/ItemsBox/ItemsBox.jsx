@@ -33,6 +33,7 @@ class ItemsBox extends React.Component {
 		const currentState = this.state;
 		let isChildrenLinkChange = false;
 		let isChildrenNumberChange =false;
+		console.log(currentProps, nextProps);
 		if (currentProps.children) {
 			for (let i = 0; i < currentProps.children.length; i++) {
 				if (currentProps.children[i] && nextProps.children[i]) {

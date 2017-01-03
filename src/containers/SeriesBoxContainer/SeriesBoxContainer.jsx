@@ -121,7 +121,6 @@ class SeriesBoxContainer extends React.Component {
 	}
 	clickSeasonEdit(modal, seriesIndex, seasonIndex, seasonItem) {
 		let { editSeasonParams } = this.state;
-		console.log(seasonItem);
 		this.switchInputModal(modal);
 		editSeasonParams.seriesIndex = seriesIndex;
 		editSeasonParams.seasonIndex = seasonIndex;
@@ -178,7 +177,7 @@ class SeriesBoxContainer extends React.Component {
 			});
 	}
 	addSeries(series, newSeries) {
-		series = this.cloneJsonItem(series);
+		series = series?series:this.cloneJsonItem(this.state.series);
 		series.items.push({
 			title: newSeries.title,
 			link: newSeries.link,
@@ -196,9 +195,8 @@ class SeriesBoxContainer extends React.Component {
 		})
 	}
 	saveSeries(series) {
-		console.log(series);
 		const self = this;
-		series = this.cloneJsonItem(series);
+		series = series?series:self.cloneJsonItem(self.state.series);
 		series.items = JSON.stringify(series.items);
 		self.setState({
 			isSaving: true
@@ -213,7 +211,7 @@ class SeriesBoxContainer extends React.Component {
 			});
 	}
 	updateSeries(series,  newSeries) {
-		series = this.cloneJsonItem(series);
+		series = series?series:this.cloneJsonItem(this.state.series);
 		const { editSeriesParams } = this.state;
 		const { seriesIndex } = editSeriesParams;
 		for (let key in newSeries) {
@@ -224,7 +222,7 @@ class SeriesBoxContainer extends React.Component {
 		})
 	}
 	updateSeriesStatus(series, index) {
-		series = this.cloneJsonItem(series);
+		series = series?series:this.cloneJsonItem(this.state.series);
 		const currentLastSeasonIndex = series.items[index].items.length - 1;
 		const currentLastSeason = series.items[index].items[currentLastSeasonIndex];
 
@@ -258,7 +256,7 @@ class SeriesBoxContainer extends React.Component {
 			});
 	}
 	addSeason(series, index) {
-		series = this.cloneJsonItem(series);
+		series = series?series:this.cloneJsonItem(this.state.series);
 		const currentLastSeasonIndex = series.items[index].items.length - 1;
 		const currentLastSeason = series.items[index].items[currentLastSeasonIndex];
 		series.items[index].items.push({
@@ -280,20 +278,18 @@ class SeriesBoxContainer extends React.Component {
 		}
 	}
 	updateSeason(series, newSeason) {
-		series = this.cloneJsonItem(series);
-		console.log(series);
+		series = series?series:this.cloneJsonItem(this.state.series);
 		const { editSeasonParams } = this.state;
 		const { seriesIndex, seasonIndex } = editSeasonParams;
 		for (let key in newSeason) {
 			series.items[seriesIndex].items[seasonIndex][key] = newSeason[key];
 		}
-		console.log(series);
 		this.setState({
 			series: series
 		})
 	}
 	updateSeasonStatus(series, index, seasonIndex, newStatus) {
-		series = this.cloneJsonItem(series);
+		series = series?series:this.cloneJsonItem(this.state.series);
 		const { showDialogModals } = this.state;
 		const currentLastSeasonIndex = series.items[index].items.length - 1;
 		const currentLastSeason = series.items[index].items[currentLastSeasonIndex];
@@ -320,7 +316,7 @@ class SeriesBoxContainer extends React.Component {
 		}
 	}
 	deleteSeason(series, index) {
-		series = this.cloneJsonItem(series);
+		series = series?series:this.cloneJsonItem(this.state.series);
 		if (series.items[index].items.length === 1) {
 			return;
 		}
@@ -337,8 +333,8 @@ class SeriesBoxContainer extends React.Component {
 			})
 		}
 	}
-	addEp(series, index, seasonIndex, newStatus, counts) {
-		series = this.cloneJsonItem(series);
+	addEp(series, index, seasonIndex, counts) {
+		series = series?series:this.cloneJsonItem(this.state.series);
 		const targetSeason = series.items[index].items[seasonIndex];
 		const currentLastEpIndex = targetSeason.items.length - 1;
 		const currentLastSeasonIndex = series.items[index].items.length - 1;
@@ -394,7 +390,7 @@ class SeriesBoxContainer extends React.Component {
 		}
 	}
 	updateEpStatus(series, index, seasonIndex, epIndex, newStatus) {
-		series = this.cloneJsonItem(series);
+		series = series?series:this.cloneJsonItem(this.state.series);
 		let targetSeason = series.items[index].items[seasonIndex];
 		const targetEp = targetSeason.items[epIndex];
 		targetEp.status = (targetEp.status + 1) % 2;
@@ -410,7 +406,7 @@ class SeriesBoxContainer extends React.Component {
 		}
 	}
 	deleteEp(series, index, seasonIndex) {
-		series = this.cloneJsonItem(series);
+		series = series?series:this.cloneJsonItem(this.state.series);
 		let targetSeason = series.items[index].items[seasonIndex];
 
 		if (series.items[index].items[seasonIndex].items.length === 1) {
@@ -482,9 +478,9 @@ class SeriesBoxContainer extends React.Component {
 											prewords={null}
 											childNumberPrewords={'S'}
 											childNumber={seriesItem.items.length}
-											updateStatusFunc={self.updateSeriesStatus.bind(self, series, index)}
-											addItemFunc={self.addSeason.bind(self, series, index)}
-											deleteItemFunc={self.deleteSeason.bind(self, series, index)}
+											updateStatusFunc={self.updateSeriesStatus.bind(self, null, index)}
+											addItemFunc={self.addSeason.bind(self, null, index)}
+											deleteItemFunc={self.deleteSeason.bind(self, null, index)}
 											clickEditFunc={self.clickSereisEdit.bind(self, 'showEditSeries', index, seriesItem)}
 											displayStyle={'block'}
 											editable={hasEditRight}
@@ -499,9 +495,9 @@ class SeriesBoxContainer extends React.Component {
 															childNumberPrewords={'EP'}
 															childNumber={seasonItem.items.length}
 															order={seasonIndex}
-															updateStatusFunc={self.updateSeasonStatus.bind(self, series, index, seasonIndex)}
-															addItemFunc={self.addEp.bind(self, series, index, seasonIndex)}
-															deleteItemFunc={self.deleteEp.bind(self, series, index, seasonIndex)}
+															updateStatusFunc={self.updateSeasonStatus.bind(self, null, index, seasonIndex)}
+															addItemFunc={self.addEp.bind(self, null, index, seasonIndex)}
+															deleteItemFunc={self.deleteEp.bind(self, null, index, seasonIndex)}
 															clickEditFunc={self.clickSeasonEdit.bind(self, 'showEditSeason', index, seasonIndex, seriesItem)}
 															clickInputNumberFunc={self.clickInputEpNumber.bind(self, 'showEpNumberInput', index, seasonIndex)}
 															displayStyle={'block'}
@@ -515,7 +511,7 @@ class SeriesBoxContainer extends React.Component {
 																			item={epItem}
 																			prewords={''}
 																			order={epIndex}
-																			updateStatusFunc={self.updateEpStatus.bind(self, series, index, seasonIndex, epIndex)}
+																			updateStatusFunc={self.updateEpStatus.bind(self, null, index, seasonIndex, epIndex)}
 																			displayStyle={'inline-flex'}
 																			editable={hasEditRight}
 																		/>
@@ -535,14 +531,14 @@ class SeriesBoxContainer extends React.Component {
 					<NumberInputModal
 						showModal={showNumberInputModals.showEpNumberInput}
 						switchShowFunc={self.switchNumberInputModal.bind(self, 'showEpNumberInput')}
-						submitFunc={self.addEp.bind(self, series, editEpNumberParams.seriesIndex, editEpNumberParams.seasonIndex, null)}
+						submitFunc={self.addEp.bind(self, null, editEpNumberParams.seriesIndex, editEpNumberParams.seasonIndex)}
 						elementId={'epNumberInputModal'}
 						defaultValue={'1'}
 					/>
 					<DialogModal
 						showModal={showDialogModals.showSaveSeries}
 						switchShowFunc={self.switchDialogModal.bind(self, 'showSaveSeries')}
-						submitFunc={self.saveSeries.bind(self, series)}
+						submitFunc={self.saveSeries.bind(self, null)}
 						title={'您確定要儲存嗎?'}
 						elementId={'showSaveSeriesDialog'}
 					/>
@@ -556,7 +552,7 @@ class SeriesBoxContainer extends React.Component {
 					<InputModal
 						showModal={showInputModals.showAddSeries}
 						switchShowFunc={self.switchInputModal.bind(self, 'showAddSeries')}
-						submitFunc={self.addSeries.bind(self, series)}
+						submitFunc={self.addSeries.bind(self, null)}
 						title={'新增影集'}
 						params={[{title: 'title', value: ''}, {title: 'link', value: ''}]}
 						elementId={'addSeriesModal'}
@@ -564,7 +560,7 @@ class SeriesBoxContainer extends React.Component {
 					<InputModal
 						showModal={showInputModals.showEditSeries}
 						switchShowFunc={self.switchInputModal.bind(self, 'showEditSeries')}
-						submitFunc={self.updateSeries.bind(self, series)}
+						submitFunc={self.updateSeries.bind(self, null)}
 						title={'編輯影集資訊'}
 						params={[{title: 'title', value: editSeriesParams.item.title}, {title: 'link', value: editSeriesParams.item.link}]}
 						elementId={'editSeriesModal'}
@@ -572,7 +568,7 @@ class SeriesBoxContainer extends React.Component {
 					<InputModal
 						showModal={showInputModals.showEditSeason}
 						switchShowFunc={self.switchInputModal.bind(self, 'showEditSeason')}
-						submitFunc={self.updateSeason.bind(self, series)}
+						submitFunc={self.updateSeason.bind(self, null)}
 						title={'編輯該季資訊'}
 						params={[{title: 'link', value: editSeasonParams.item.link}]}
 						elementId={'editSeasonModal'}
