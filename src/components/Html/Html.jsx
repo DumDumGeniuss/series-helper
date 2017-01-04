@@ -60,6 +60,7 @@ class Html extends React.Component {
 			<html>
 				<head>
 					<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+					<meta name="google-site-verification" content="mU8vb5Hbce4m1TA7OFv5zsdvntNy-sHQ_6PZfFUsbeM" />
 					{Object.keys(assets.styles).map((style, key) =>
 						<link href={assets.styles[style]} key={key} media="screen, projection"
 							rel="stylesheet" type="text/css" charSet="UTF-8"/>
