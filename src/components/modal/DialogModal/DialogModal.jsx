@@ -34,8 +34,8 @@ class DialogModal extends React.Component {
 						<b>{title}</b>
 					</h1>
 					<div className={style.functionBar}>
-						<span onClick={this.submit.bind(this, submitFunc, switchShowFunc)}>Confirm</span>
-						<span onClick={switchShowFunc}>Cancel</span>
+						<span onClick={this.submit.bind(this, submitFunc, switchShowFunc)}>確認</span>
+						<span onClick={switchShowFunc}>取消</span>
 					</div>
 				</div>
 			</div>

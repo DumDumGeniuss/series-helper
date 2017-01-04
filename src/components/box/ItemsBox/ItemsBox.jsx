@@ -28,16 +28,19 @@ class ItemsBox extends React.Component {
 			showChild: false,
 		};
 	}
+	/* I do the whole shouldComponentUpdate judge by myself, because the data we pass into this component
+	are not as usual, so it's inevitible. */
 	shouldComponentUpdate(nextProps, nextState) {
 		const currentProps = this.props;
 		const currentState = this.state;
 		let isChildrenLinkChange = false;
 		let isChildrenNumberChange =false;
-		console.log(currentProps, nextProps);
 		if (currentProps.children) {
 			for (let i = 0; i < currentProps.children.length; i++) {
 				if (currentProps.children[i] && nextProps.children[i]) {
-					if (currentProps.children[i].props.item.link !== nextProps.children[i].props.item.link) {
+					const [currentChildItem, nextChildItem] = [currentProps.children[i].props.item, nextProps.children[i].props.item];
+					if ((currentChildItem.link !== nextChildItem.link)
+						||(currentChildItem.title !== nextChildItem.title)) {
 						isChildrenLinkChange = true;
 					}
 				}
@@ -55,6 +58,7 @@ class ItemsBox extends React.Component {
 		return (currentProps.item.status !== nextProps.item.status)
 			|| (currentProps.item.link !== nextProps.item.link)
 			|| (currentProps.item.title !== nextProps.item.title)
+			|| (currentProps.item.episodeNumber !== nextProps.item.episodeNumber)
 			|| (currentState.showChild !== nextState.showChild)
 			|| ((currentProps.children !== undefined) && (currentProps.children.length !== nextProps.children.length))
 			|| isChildrenNumberChange
@@ -100,26 +104,30 @@ class ItemsBox extends React.Component {
 					<div className={style.rightItems}>
 						<span className={childNumber?style.number:style.invisible}><b>{childNumberPrewords}{childNumber}</b></span>
 						<div className={style.light + ' ' + signalColor} onClick={editable?updateStatusFunc:(function(){})}>{signalWord}</div>
-						<div style={ {'display': children?'initial':'none'} }>
+
 							<Edit onClick={clickEditFunc} className={editable?style.functionIcon:style.invisible} />
 							<a style={ {'display': link?'initial':'none'} } href={link} target={"_blank"}>
 								<Film className={style.functionIcon} />
 							</a>
-							<MinusSquare
-								style={ {'display': showChild?'initial':'none'} }
-								className={style.functionIcon}
-								onClick={this.switchChildDisplay.bind(this)}
-							/>
-							<PlusSquare
-								style={ {'display': showChild?'none':'initial'} }
-								className={style.functionIcon}
-								onClick={this.switchChildDisplay.bind(this)}
-							/>
-						</div>
+							<div>
+								<MinusSquare
+									style={ {'display': showChild?'initial':'none'} }
+									className={style.functionIcon}
+									onClick={this.switchChildDisplay.bind(this)}
+								/>
+							</div>
+							<div>
+								<PlusSquare
+									style={ {'display': showChild?'none':'initial'} }
+									className={style.functionIcon}
+									onClick={this.switchChildDisplay.bind(this)}
+								/>
+							</div>
+
 					</div>
 				</div>
-				<div style={ {'display': showChild?'initial':'none'} } className={style.content}>
-					<div className={style.leftBox}>
+				<div className={style.content}>
+					<div className={showChild?style.leftBox:style.invisible}>
 						<Minus
 							className={editable?style.minusItemIcon:style.invisible}
 							onClick={deleteItemFunc}
@@ -133,7 +141,7 @@ class ItemsBox extends React.Component {
 							onClick={clickInputNumberFunc}
 						/>
 					</div>
-					<div className={style.childContainer}>
+					<div className={showChild?style.childContainer:style.invisible}>
 						{children}
 					</div>
 				</div>
