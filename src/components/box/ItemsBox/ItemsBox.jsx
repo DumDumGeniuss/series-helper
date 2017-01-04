@@ -125,7 +125,9 @@ class ItemsBox extends React.Component {
 						<span className={childNumber?style.number:style.invisible}><b>{childNumberPrewords}{childNumber}</b></span>
 						<div className={style.light + ' ' + signalColor} onClick={editable?updateStatusFunc:(function(){})}>{signalWord}</div>
 
-							<Edit onClick={clickEditFunc} className={editable?style.functionIcon:style.invisible} />
+							<div>
+								<Edit onClick={clickEditFunc} className={editable?style.functionIcon:style.invisible} />
+							</div>
 							<a style={ {'display': link?'initial':'none'} } href={link} target={"_blank"}>
 								<Film className={style.functionIcon} />
 							</a>
