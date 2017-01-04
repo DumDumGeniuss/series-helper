@@ -33,15 +33,37 @@ class ItemsBox extends React.Component {
 	shouldComponentUpdate(nextProps, nextState) {
 		const currentProps = this.props;
 		const currentState = this.state;
-		let isChildrenLinkChange = false;
-		let isChildrenNumberChange =false;
+		let isItemChange = false;
+		let isPropsChange = false;
+		let isChildrenItemChange = false;
+		let isChildrenPropsChange =false;
+		let isStateChange = false;
+
+		const [currentItem, nextItem] = [currentProps.item, nextProps.item];
+		if ((currentItem.status !== nextItem.status)
+			|| (currentItem.link !== nextItem.link)
+			|| (currentItem.title !== nextItem.title)
+			|| (currentItem.episodeNumber !== nextItem.episodeNumber)) {
+			isItemChange = true;
+		}
+
+		console.log(currentProps, nextProps);
+		if ((currentProps.editable !== nextProps.editable)
+			|| ((currentProps.children !== undefined) && (currentProps.children.length !== nextProps.children.length))) {
+			isPropsChange = true;
+		}
+
+		if ((currentState.showChild !== nextState.showChild)) {
+			isStateChange = true;
+		}
+
 		if (currentProps.children) {
 			for (let i = 0; i < currentProps.children.length; i++) {
 				if (currentProps.children[i] && nextProps.children[i]) {
 					const [currentChildItem, nextChildItem] = [currentProps.children[i].props.item, nextProps.children[i].props.item];
 					if ((currentChildItem.link !== nextChildItem.link)
 						||(currentChildItem.title !== nextChildItem.title)) {
-						isChildrenLinkChange = true;
+						isChildrenItemChange = true;
 					}
 				}
 			}
@@ -50,19 +72,17 @@ class ItemsBox extends React.Component {
 			for (let i = 0; i < currentProps.children.length; i++) {
 				if (currentProps.children[i] && nextProps.children[i]) {
 					if (currentProps.children[i].props.childNumber !== nextProps.children[i].props.childNumber) {
-						isChildrenNumberChange = true;
+						isChildrenPropsChange = true;
 					}
 				}
 			}
 		}
-		return (currentProps.item.status !== nextProps.item.status)
-			|| (currentProps.item.link !== nextProps.item.link)
-			|| (currentProps.item.title !== nextProps.item.title)
-			|| (currentProps.item.episodeNumber !== nextProps.item.episodeNumber)
-			|| (currentState.showChild !== nextState.showChild)
+		return isItemChange
+			|| isPropsChange
+			|| isStateChange
 			|| ((currentProps.children !== undefined) && (currentProps.children.length !== nextProps.children.length))
-			|| isChildrenNumberChange
-			|| isChildrenLinkChange;
+			|| isChildrenPropsChange
+			|| isChildrenItemChange;
 
 	}
 	componentWillReceiveProps(nextProps) {
