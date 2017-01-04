@@ -168,7 +168,7 @@ class SeriesBoxContainer extends React.Component {
 				return seriesApi.getSeries(res._id);
 			})
 			.then((res) => {
-				res.items = JSON.parse(res.items);
+				// res.items = JSON.parse(res.items);
 				this.setState({
 					series: res,
 					isLoading: false
@@ -199,13 +199,13 @@ class SeriesBoxContainer extends React.Component {
 	saveSeries() {
 		const self = this;
 		let series = self.cloneJsonItem(self.state.series);
-		series.items = JSON.stringify(series.items);
+		// series.items = JSON.stringify(series.items);
 		self.setState({
 			isSaving: true
 		});
 		seriesApi.updateSeries(series)
 			.then((res) => {
-				res.items = JSON.parse(res.items);
+				// res.items = JSON.parse(res.items);
 				self.setState({
 					series: res,
 					isSaving: false
@@ -247,7 +247,7 @@ class SeriesBoxContainer extends React.Component {
 		});
 		seriesApi.getSeries(series._id)
 			.then((res) => {
-				res.items = JSON.parse(res.items);
+				// res.items = JSON.parse(res.items);
 				self.setState({
 					series: res,
 					isResetting: false
