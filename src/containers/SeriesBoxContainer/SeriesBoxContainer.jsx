@@ -376,7 +376,7 @@ class SeriesBoxContainer extends React.Component {
 		return (
 			<div className={style.outsider}>
 				<div className={series._id?style.invisible:style.pleasLoginContainer}>
-					<div className={isLoading?style.invisible:style.loginMessage}>請登入以繼續</div>
+					<div className={isLoading?style.invisible:style.loginMessage}><LoginButtonContainer /></div>
 					<LoadingBox boxWidth={35} boxHeight={35} visible={isLoading} color={'#024e80'}/>
 				</div>
 				<div className={series._id?style.seriesBoxContainer:style.invisible}>
