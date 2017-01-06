@@ -167,16 +167,20 @@
 	.seriesBoxContainer {
 	
 		.statusFilterBox {
-			width: 90px;
+			width: 100px;
 			height: 30px;
+			top: 5px;
+			left: 5px;
 	
 			.statusFilterButton {
-				width: 35px;
-				height: 35px;
+				width: 30px;
+				height: 30px;
+				border-radius: 25px;
 			}
 			.statusFilterButtonPicked {
-				width: 35px;
-				height: 35px;
+				width: 30px;
+				height: 30px;
+				border-radius: 25px;
 			}
 		}
 	}
