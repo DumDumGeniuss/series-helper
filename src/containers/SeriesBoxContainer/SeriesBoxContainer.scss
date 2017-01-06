@@ -162,3 +162,21 @@
 		font-size: 2em
 	}
 }
+
+@media screen and (max-width: 500px) {
+	.seriesBoxContainer {
+	
+		.statusFilterBox {
+			width: 90px;
+			height: 30px;
+	
+			.statusFilterButton {
+				width: 35px;
+				height: 35px;
+			}
+			.statusFilterButtonPicked {
+				width: 35px;
+				height: 35px;
+			}
+	}
+}
