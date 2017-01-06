@@ -54,6 +54,7 @@ class SeriesBoxContainer extends React.Component {
 			isLoading: false,
 			isSaving: false,
 			isResetting: false,
+			statusFiltered: null
 		};
 		this.getSeries = this.getSeries.bind(this);
 	}
@@ -86,6 +87,11 @@ class SeriesBoxContainer extends React.Component {
 	}
 	cloneJsonItem(item) {
 		return JSON.parse(JSON.stringify(item));
+	}
+	filterStatus(status) {
+		this.setState({
+			statusFiltered: status
+		});
 	}
 	switchNumberInputModal(modal) {
 		let { showNumberInputModals } = this.state;
@@ -368,13 +374,11 @@ class SeriesBoxContainer extends React.Component {
 	render () {
 		const self = this;
 		let { user } = self.props.state;
-		const { isLoading, isSaving, isResetting, series, seriesOwnerProfile, showInputModals, showNumberInputModals, editSeriesParams, editSeasonParams, editEpNumberParams, showDialogModals } = self.state;
+		const { isLoading, isSaving, isResetting, series, seriesOwnerProfile, showInputModals, showNumberInputModals, editSeriesParams, editSeasonParams, editEpNumberParams, showDialogModals, statusFiltered } = self.state;
 		const style = require('./SeriesBoxContainer.scss');
 		const seriesHelper = require('./SeriesHelper.png');
 		const currentUserId = user.myProfile?user.myProfile._id:'';
 		const [seriesOwnerId, seriesOwnerName, seriesOwnerPicture] = seriesOwnerProfile?[seriesOwnerProfile._id, seriesOwnerProfile.name, seriesOwnerProfile.picture]:[];
-		const seriesTitleFont = seriesOwnerName?(seriesOwnerName + ' 的追劇進度'):'';
-		const seriesOwnerPictureElement = seriesOwnerPicture?<img src={seriesOwnerPicture} />:null;
 		const hasEditRight = currentUserId===seriesOwnerId?true:false;
 
 
@@ -387,13 +391,18 @@ class SeriesBoxContainer extends React.Component {
 					<LoadingBox boxWidth={35} boxHeight={35} visible={isLoading} color={'#024e80'}/>
 				</div>
 				<div className={series._id?style.seriesBoxContainer:style.invisible}>
+					<div className={style.statusFilterBox}>
+						<div className={statusFiltered===0?(style.statusFilterButtonPicked + ' ' + style.greenGradient):(style.statusFilterButton + ' ' + style.greenGradient)} onClick={this.filterStatus.bind(this, 0)}>完</div>
+						<div className={statusFiltered===1?(style.statusFilterButtonPicked + ' ' + style.orangeGradient):(style.statusFilterButton + ' ' + style.orangeGradient)} onClick={this.filterStatus.bind(this, 1)}>追</div>
+						<div className={statusFiltered===null?(style.statusFilterButtonPicked + ' ' + style.redGradient):(style.statusFilterButton + ' ' + style.redGradient)} onClick={this.filterStatus.bind(this, null)}>全</div>
+					</div>
 					<figure>
-						{seriesOwnerPictureElement}
+						{seriesOwnerPicture?<img src={seriesOwnerPicture} />:null}
 					</figure>
 					<h1 className={style.h1Title}>
-						{seriesTitleFont}
+						{seriesOwnerName?(seriesOwnerName + ' 的追劇進度'):''}
 					</h1>
-					<div className={currentUserId===seriesOwnerId?'':style.invisible}>
+					<div className={hasEditRight?'':style.invisible}>
 						<div className={style.functionBar}>
 							<span className={style.mainFuncIcon + ' ' + style.redGradient} onClick={self.switchInputModal.bind(self, 'showAddSeries')}>
 								<b>新增影集</b>
@@ -412,7 +421,7 @@ class SeriesBoxContainer extends React.Component {
 						{
 							series.items.map( (seriesItem, index) => {
 								return (
-									<div key={seriesItem._id} className={style.itemsArea}>
+									<div key={seriesItem._id} className={(statusFiltered===null||statusFiltered===seriesItem.status)?style.itemsArea:style.invisible}>
 										<ItemsBox
 											item={seriesItem}
 											prewords={null}

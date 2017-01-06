@@ -48,15 +48,53 @@
 	border-radius: 15px;
 	min-height: calc(100vh - 80px);
 	z-index: 1;
+
+	.statusFilterBox {
+		position: absolute;
+		display: inline-flex;
+		top: 10px;
+		left: 10px;
+		justify-content: space-around;
+		width: 120px;
+		height: 40px;
+
+		.statusFilterButton {
+			display: inline-flex;
+			width: 35px;
+			height: 35px;
+			justify-content: center;
+			align-items: center;
+			border-radius: 35px;
+			color: white;
+			cursor: pointer;
+			font-size: 1.8em;
+		}
+		.statusFilterButtonPicked {
+			display: inline-flex;
+			width: 35px;
+			height: 35px;
+			justify-content: center;
+			align-items: center;
+			border-radius: 35px;
+			color: #024e80;
+			cursor: pointer;
+			font-size: 1.8em;
+			border: 2px solid  #024e80;
+		}
+		.statusFilterButton:hover {
+			color: yellow;
+		}
+	}
+
+	.seriesBox {
+		display: flex;
+		justify-content: flex-start;
+		flex-direction:column;
+		margin-top: 10px;
+		width: 80%;
+	}
 }
 
-.seriesBox {
-	display: flex;
-	justify-content: flex-start;
-	flex-direction:column;
-	margin-top: 10px;
-	width: 80%;
-}
 
 .itemsArea {
 	margin: 0px 0px 15px 0px;
@@ -93,18 +131,18 @@
 		animation: enlargeFont 0.3s;
 		-webkit-animation: none;
 	}
+}
 
-	.redGradient {
-		background-image: linear-gradient(#ff9497, #f15252);
-	}
+.redGradient {
+	background-image: linear-gradient(#ff9497, #f15252);
+}
 
-	.orangeGradient {
-		background-image: linear-gradient(#ffd145, #FF9800);
-	}
+.orangeGradient {
+	background-image: linear-gradient(#ffd145, #FF9800);
+}
 
-	.greenGradient {
-		background-image: linear-gradient(#aef162, #4CAF50);
-	}
+.greenGradient {
+	background-image: linear-gradient(#aef162, #4CAF50);
 }
 
 @keyframes enlargeFont {

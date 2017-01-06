@@ -127,7 +127,7 @@ class ItemsBox extends React.Component {
 						<div className={style.light + ' ' + signalColor} onClick={editable?updateStatusFunc:(function(){})}>{signalWord}</div>
 							<div>
 								<Trash 
-									className={deleteSelfFunc?style.functionIcon:style.invisible}
+									className={(deleteSelfFunc&&editable)?style.functionIcon:style.invisible}
 									onClick={deleteSelfFunc}
 								/>
 							</div>
