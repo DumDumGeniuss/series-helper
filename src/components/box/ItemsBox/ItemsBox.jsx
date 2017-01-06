@@ -6,6 +6,7 @@ import Plus from 'react-icons/lib/fa/plus';
 import Film from 'react-icons/lib/fa/film';
 import Edit from 'react-icons/lib/fa/edit';
 import Calculator from 'react-icons/lib/fa/calculator';
+import Trash from 'react-icons/lib/fa/trash';
 
 class ItemsBox extends React.Component {
 	static get propTypes() {
@@ -19,6 +20,7 @@ class ItemsBox extends React.Component {
 			clickEditFunc: React.PropTypes.func,
 			deleteItemFunc: React.PropTypes.func,
 			clickInputNumberFunc: React.PropTypes.func,
+			deleteSelfFunc: React.PropTypes.func,
 			editable: React.PropTypes.bool,
 		}
 	}
@@ -47,7 +49,6 @@ class ItemsBox extends React.Component {
 			isItemChange = true;
 		}
 
-		console.log(currentProps, nextProps);
 		if ((currentProps.editable !== nextProps.editable)
 			|| ((currentProps.children !== undefined) && (currentProps.children.length !== nextProps.children.length))) {
 			isPropsChange = true;
@@ -96,7 +97,7 @@ class ItemsBox extends React.Component {
 	}
 	render () {
 		const style = require('./ItemsBox.scss');
-		const { item, children, prewords, order, updateStatusFunc, addItemFunc, clickEditFunc, deleteItemFunc, displayStyle, childNumber, childNumberPrewords, editable, clickInputNumberFunc } = this.props;
+		const { item, children, prewords, order, updateStatusFunc, addItemFunc, clickEditFunc, deleteItemFunc, displayStyle, childNumber, childNumberPrewords, editable, clickInputNumberFunc, deleteSelfFunc } = this.props;
 		const { showChild } = this.state;
 		const title = item.title?item.title:(prewords + (order+1));
 		const link = item.link?item.link:null;
@@ -124,7 +125,12 @@ class ItemsBox extends React.Component {
 					<div className={style.rightItems}>
 						<span className={childNumber?style.number:style.invisible}><b>{childNumberPrewords}{childNumber}</b></span>
 						<div className={style.light + ' ' + signalColor} onClick={editable?updateStatusFunc:(function(){})}>{signalWord}</div>
-
+							<div>
+								<Trash 
+									className={deleteSelfFunc?style.functionIcon:style.invisible}
+									onClick={deleteSelfFunc}
+								/>
+							</div>
 							<div>
 								<Edit onClick={clickEditFunc} className={editable?style.functionIcon:style.invisible} />
 							</div>

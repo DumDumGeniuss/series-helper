@@ -238,6 +238,13 @@ class SeriesBoxContainer extends React.Component {
 			})
 		}
 	}
+	deleteSeries(index) {
+		let series = this.cloneJsonItem(this.state.series);
+		series.items.splice(index, 1);
+		this.setState({
+			series: series
+		})
+	}
 	resetSeries () {
 		const self = this;
 		const { series } = self.state;
@@ -366,7 +373,7 @@ class SeriesBoxContainer extends React.Component {
 		const seriesHelper = require('./SeriesHelper.png');
 		const currentUserId = user.myProfile?user.myProfile._id:'';
 		const [seriesOwnerId, seriesOwnerName, seriesOwnerPicture] = seriesOwnerProfile?[seriesOwnerProfile._id, seriesOwnerProfile.name, seriesOwnerProfile.picture]:[];
-		const seriesTitleFont = seriesOwnerName?(seriesOwnerName + '\'s Series'):'';
+		const seriesTitleFont = seriesOwnerName?(seriesOwnerName + ' 的追劇進度'):'';
 		const seriesOwnerPictureElement = seriesOwnerPicture?<img src={seriesOwnerPicture} />:null;
 		const hasEditRight = currentUserId===seriesOwnerId?true:false;
 
@@ -414,6 +421,7 @@ class SeriesBoxContainer extends React.Component {
 											updateStatusFunc={self.updateSeriesStatus.bind(self, null, index)}
 											addItemFunc={self.addSeason.bind(self, index)}
 											deleteItemFunc={self.deleteSeason.bind(self, index)}
+											deleteSelfFunc={self.deleteSeries.bind(self, index)}
 											clickEditFunc={self.clickSereisEdit.bind(self, 'showEditSeries', index, seriesItem)}
 											displayStyle={'block'}
 											editable={hasEditRight}
