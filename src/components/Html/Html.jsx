@@ -53,6 +53,14 @@ const fbScript = `
 </script>
 `;
 
+const ogTags = {
+	"og:title": "追劇妙管家",
+	"og:description": "常常忘記自己的追劇進度嗎？想找個方便又快速的紀錄工具嗎？追劇妙管家正是您的第一首選！",
+	"og:type": "website",
+	"og:image": "http://serieshelper.dumdumgenius.com/ogTagWebImage.jpg",
+	"og:url": "http://serieshelper.dumdumgenius.com/"
+};
+
 class Html extends React.Component {
 	render () {
 		const { assets, reactHtml, store } = this.props;
@@ -64,6 +72,9 @@ class Html extends React.Component {
 					{Object.keys(assets.styles).map((style, key) =>
 						<link href={assets.styles[style]} key={key} media="screen, projection"
 							rel="stylesheet" type="text/css" charSet="UTF-8"/>
+					)}
+					{Object.keys(ogTags).map((key) => 
+						<meta property={key} content={ogTags[key]} key={key}/>
 					)}
 					<style>{css}</style>
 				</head>
