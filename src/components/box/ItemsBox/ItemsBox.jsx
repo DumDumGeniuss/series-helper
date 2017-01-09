@@ -81,7 +81,6 @@ class ItemsBox extends React.Component {
 		return isItemChange
 			|| isPropsChange
 			|| isStateChange
-			|| ((currentProps.children !== undefined) && (currentProps.children.length !== nextProps.children.length))
 			|| isChildrenPropsChange
 			|| isChildrenItemChange;
 
