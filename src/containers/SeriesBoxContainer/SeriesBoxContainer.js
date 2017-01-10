@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // import * as seriesActions from '../../actions/series.js';
 
-import ItemsBox from '../../components/box/ItemsBox/ItemsBox.jsx';
-import InputModal from '../../components/modal/InputModal/InputModal.jsx';
-import NumberInputModal from '../../components/modal/NumberInputModal/NumberInputModal.jsx';
-import DialogModal from '../../components/modal/DialogModal/DialogModal.jsx';
-import LoginButtonContainer from '../../containers/LoginButtonContainer/LoginButtonContainer.jsx';
-import LoadingBox from '../../components/box/LoadingBox/LoadingBox.jsx';
+import ItemsBox from '../../components/box/ItemsBox/ItemsBox.js';
+import InputModal from '../../components/modal/InputModal/InputModal.js';
+import NumberInputModal from '../../components/modal/NumberInputModal/NumberInputModal.js';
+import DialogModal from '../../components/modal/DialogModal/DialogModal.js';
+import LoginButtonContainer from '../../containers/LoginButtonContainer/LoginButtonContainer.js';
+import LoadingBox from '../../components/box/LoadingBox/LoadingBox.js';
 
 import fb from '../../apis/fb.js';
 import * as userApi from '../../apis/user.js';

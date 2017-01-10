@@ -19,8 +19,8 @@ import thunk from 'redux-thunk';
 import ReactDomServer from 'react-dom/server';
 
 import reducers from './reducers/index.js';
-import routes from './routes/routes.jsx';
-import Html from './components/Html/Html.jsx';
+import routes from './routes/routes.js';
+import Html from './components/Html/Html.js';
 
 import dotenv from 'dotenv';
 

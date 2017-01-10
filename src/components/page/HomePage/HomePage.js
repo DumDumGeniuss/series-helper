@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
-import LogoBox from '../../box/LogoBox/LogoBox.jsx';
+import LogoBox from '../../box/LogoBox/LogoBox.js';
 
 class HomePage extends React.Component {
 	static get propTypes() {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router'
-import LoginButtonContainer from '../../../containers/LoginButtonContainer/LoginButtonContainer.jsx';
+import LoginButtonContainer from '../../../containers/LoginButtonContainer/LoginButtonContainer.js';
 
 class HomeLayout extends React.Component {
 	static get propTypes() {

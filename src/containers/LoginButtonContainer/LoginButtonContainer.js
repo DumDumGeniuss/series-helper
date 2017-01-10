@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as userActions from '../../actions/user.js';
 
-import LoadingBox from '../../components/box/LoadingBox/LoadingBox.jsx';
+import LoadingBox from '../../components/box/LoadingBox/LoadingBox.js';
 
 import FacebookSquare from 'react-icons/lib/fa/facebook-square';
 import fb from '../../apis/fb.js';
