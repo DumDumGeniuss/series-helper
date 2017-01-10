@@ -16,7 +16,7 @@ export const updateUser = (user) => {
 			'Content-Type': 'application/json',
 		},
 		mode: 'cors',
-		body: JSON.stringify(user)
+		body: JSON.stringify(user),
 	})
 		.then((res) => {
 			return res.json();
@@ -24,7 +24,7 @@ export const updateUser = (user) => {
 		.then((res) => {
 			return res;
 		})
-		.catch(err => {
+		.catch(() => {
 			console.log('登錄失敗');
-		})
+		});
 };

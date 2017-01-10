@@ -3,7 +3,12 @@ import React from 'react';
 class NumberInputModal extends React.Component {
 	static get propTypes() {
 		return {
-		}
+			elementId: React.PropTypes.string,
+			defaultValue: React.PropTypes.string,
+			switchShowFunc: React.PropTypes.func,
+			submitFunc: React.PropTypes.func,
+			showModal: React.PropTypes.bool,
+		};
 	}
 	constructor(props) {
 		super(props);
@@ -12,31 +17,31 @@ class NumberInputModal extends React.Component {
 			currentValue: '',
 		};
 	}
-	componentWillReceiveProps(nextProps) {
+	componentDidMount() {
 		const { elementId } = this.props;
 		const numberInput = document.getElementById(elementId);
 		numberInput.value = '';
 	}
-	componentDidMount() {
+	componentWillReceiveProps() {
 		const { elementId } = this.props;
 		const numberInput = document.getElementById(elementId);
 		numberInput.value = '';
 	}
 	clickNumber(number) {
 		this.setState({
-			showAlert: false
+			showAlert: false,
 		});
 		const { elementId } = this.props;
 		const numberInput = document.getElementById(elementId);
-		if (parseInt(numberInput.value + number) >= 1000) {
+		if (parseInt(numberInput.value + number, 10) >= 1000) {
 			this.setState({
-				showAlert: true
+				showAlert: true,
 			});
 			return;
 		}
 		numberInput.value += number;
 		this.setState({
-			currentValue: numberInput.value
+			currentValue: numberInput.value,
 		});
 	}
 	handleInputChange() {
@@ -48,31 +53,31 @@ class NumberInputModal extends React.Component {
 	submit(submitFunc, switchShowFunc) {
 		const { elementId, defaultValue } = this.props;
 		const numberInput = document.getElementById(elementId);
-		submitFunc(numberInput.value.length===0?parseInt(defaultValue):parseInt(numberInput.value));
+		submitFunc(numberInput.value.length === 0 ? parseInt(defaultValue, 10) : parseInt(numberInput.value, 10));
 		switchShowFunc();
 	}
 	back() {
 		this.setState({
-			showAlert: false
+			showAlert: false,
 		});
 		const { elementId } = this.props;
 		const numberInput = document.getElementById(elementId);
-		let newValue = numberInput.value.substring(0, numberInput.value.length?(numberInput.value.length - 1):0);
-		numberInput.value = newValue;		
+		const newValue = numberInput.value.substring(0, numberInput.value.length ? (numberInput.value.length - 1) : 0);
+		numberInput.value = newValue;
 	}
-	render () {
+	render() {
 		const style = require('./NumberInputModal.scss');
 		const { switchShowFunc, submitFunc, showModal, elementId } = this.props;
 		const { showAlert } = this.state;
 		return (
-			<div className={showModal?style.modalContainer:style.invisible}>
+			<div className={showModal ? style.modalContainer : style.invisible}>
 				<div className={style.background} onClick={switchShowFunc}></div>
 				<div className={style.contentBox}>
 					<h1 className={style.title}>請輸入數字</h1>
 					<div className={style.inputBox}>
 						<input id={elementId} onChange={this.handleInputChange.bind(this)}/>
 					</div>
-					<h1 className={showAlert?style.alert:style.invisible}>輸入數字太大</h1>
+					<h1 className={showAlert ? style.alert : style.invisible}>輸入數字太大</h1>
 					<div className={style.numberBox}>
 						<div onClick={this.clickNumber.bind(this, 1)} className={style.number}>1</div>
 						<div onClick={this.clickNumber.bind(this, 2)} className={style.number}>2</div>

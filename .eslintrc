@@ -16,6 +16,8 @@
     "no-console": 0
   },
   "globals": {
-    "console": true
+    "console": true,
+    "FB": true,
+    "IS_FB_API_LOADED": true
   },
 }

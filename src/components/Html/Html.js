@@ -30,7 +30,7 @@ const fbScript = `
   window.fbAsyncInit = function() {
   FB.init({
     appId      : '${process.env.FACEBOOK_API_ID}',
-    cookie     : true,  // enable cookies to allow the server to access 
+    cookie     : true,  // enable cookies to allow the server to access
                         // the session
     xfbml      : true,  // parse social plugins on this page
     version    : 'v2.8' // use graph api version 2.8
@@ -38,7 +38,7 @@ const fbScript = `
 
   IS_FB_API_LOADED = true;
 
-  var event = new CustomEvent("fb-api-loaded", { "detail": "FB api loaded!!" });
+  var event = new CustomEvent('fb-api-loaded', { 'detail': 'FB api loaded!!' });
   document.dispatchEvent(event);
 
   };
@@ -46,7 +46,7 @@ const fbScript = `
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
     js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js";
+    js.src = '//connect.facebook.net/en_US/sdk.js';
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
 
@@ -54,15 +54,22 @@ const fbScript = `
 `;
 
 const ogTags = {
-	"og:title": "追劇妙管家",
-	"og:description": "常常忘記自己的追劇進度嗎？想找個方便又快速的紀錄工具嗎？追劇妙管家正是您的第一首選！",
-	"og:type": "website",
-	"og:image": "http://serieshelper.dumdumgenius.com/ogTagWebImage.jpg",
-	"og:url": "http://serieshelper.dumdumgenius.com/"
+	'og:title': '追劇妙管家',
+	'og:description': '常常忘記自己的追劇進度嗎？想找個方便又快速的紀錄工具嗎？追劇妙管家正是您的第一首選！',
+	'og:type': 'website',
+	'og:image': 'http://serieshelper.dumdumgenius.com/ogTagWebImage.jpg',
+	'og:url': 'http://serieshelper.dumdumgenius.com/',
 };
 
 class Html extends React.Component {
-	render () {
+	static get propTypes() {
+		return {
+			assets: React.PropTypes.object,
+			reactHtml: React.PropTypes.string,
+			store: React.PropTypes.object,
+		};
+	}
+	render() {
 		const { assets, reactHtml, store } = this.props;
 		return (
 			<html>
@@ -73,7 +80,7 @@ class Html extends React.Component {
 						<link href={assets.styles[style]} key={key} media="screen, projection"
 							rel="stylesheet" type="text/css" charSet="UTF-8"/>
 					)}
-					{Object.keys(ogTags).map((key) => 
+					{Object.keys(ogTags).map((key) =>
 						<meta property={key} content={ogTags[key]} key={key}/>
 					)}
 					<style>{css}</style>

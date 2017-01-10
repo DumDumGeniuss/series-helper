@@ -12,7 +12,9 @@ import fb from '../../apis/fb.js';
 class LoginButtonContainer extends React.Component {
 	static get propTypes() {
 		return {
-		}
+			state: React.PropTypes.object,
+			actions: React.PropTypes.object,
+		};
 	}
 	constructor(props) {
 		super(props);
@@ -24,7 +26,7 @@ class LoginButtonContainer extends React.Component {
 	componentDidMount() {
 		const self = this;
 		if (!IS_FB_API_LOADED) {
-			document.addEventListener("fb-api-loaded", function(e) {
+			document.addEventListener('fb-api-loaded', () => {
 				self.checkFbLogin();
 			});
 		} else {
@@ -33,11 +35,10 @@ class LoginButtonContainer extends React.Component {
 	}
 	checkFbLogin() {
 		const { actions } = this.props;
-		const { user } = this.props.state;
 		let userToUpdate;
 		fb.checkLogin()
 			.then((res) => {
-				if(res.status!=='connected') {
+				if (res.status !== 'connected') {
 					throw new Error('not logged in');
 				}
 				return fb.getMyProfile();
@@ -59,10 +60,10 @@ class LoginButtonContainer extends React.Component {
 		const { actions } = self.props;
 		let user;
 		self.setState({
-			onLoading: true
+			onLoading: true,
 		});
 		fb.login()
-			.then((res) => {
+			.then(() => {
 				return fb.getMyProfile();
 			})
 			.then((res) => {
@@ -73,7 +74,7 @@ class LoginButtonContainer extends React.Component {
 				user.picture = res;
 				actions.setMyProfile(user);
 				self.setState({
-					onLoading: false
+					onLoading: false,
 				});
 			})
 			.catch((err) => {
@@ -84,33 +85,33 @@ class LoginButtonContainer extends React.Component {
 		const self = this;
 		const { actions } = self.props;
 		self.setState({
-			onLoading: true
+			onLoading: true,
 		});
 		fb.logOut()
-			.then((res) => {
+			.then(() => {
 				actions.clearMyProfileOptimistic();
 				self.setState({
-					onLoading: false
+					onLoading: false,
 				});
 			})
-			.catch((err) => {
+			.catch(() => {
 				actions.clearMyProfileOptimistic();
 			});
 	}
-	render () {
+	render() {
 		const style = require('./LoginButtonContainer.scss');
 		const { user } = this.props.state;
 		const { onLoading } = this.state;
 		return (
 			<div>
-				<div style={ {'display': user.myProfile?'none':'initial'} } className={style.loginButtonContainer} onClick={this.login.bind(this)}>
+				<div style={ {'display': user.myProfile ? 'none' : 'initial'} } className={style.loginButtonContainer} onClick={this.login.bind(this)}>
 					登入
-					<FacebookSquare className={onLoading?style.invisible:''} />
+					<FacebookSquare className={onLoading ? style.invisible : ''} />
 					<LoadingBox boxWidth={20} boxHeight={20} visible={onLoading} color={'yellow'}/>
 				</div>
-				<div style={ {'display': user.myProfile?'initial':'none'} } className={style.loginButtonContainer} onClick={this.logout.bind(this)}>
+				<div style={ {'display': user.myProfile ? 'initial' : 'none'} } className={style.loginButtonContainer} onClick={this.logout.bind(this)}>
 					登出
-					<FacebookSquare className={onLoading?style.invisible:''} />
+					<FacebookSquare className={onLoading ? style.invisible : ''} />
 					<LoadingBox boxWidth={35} boxHeight={35} visible={onLoading} color={'yellow'}/>
 				</div>
 			</div>
@@ -131,6 +132,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 /**
-* Connect Redux with this Component. (Container is on of the design pattern of React-Redux) 
+* Connect Redux with this Component. (Container is on of the design pattern of React-Redux)
 */
 export default connect(mapStateToProps, mapDispatchToProps)(LoginButtonContainer);

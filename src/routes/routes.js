@@ -6,11 +6,8 @@ import HomePage from '../components/page/HomePage/HomePage.js';
 
 export default (
 	<Route path="/" component={HomeLayout}>
-		<IndexRoute component={HomePage}>
-		</IndexRoute>
-		<Route path="/series" component={SeriesBoxContainer}>
-		</Route>
-		<Route path="/series/:userId" component={SeriesBoxContainer}>
-		</Route>
+		<IndexRoute component={HomePage} />
+		<Route path="/series" component={SeriesBoxContainer} />
+		<Route path="/series/:userId" component={SeriesBoxContainer} />
 	</Route>
 );

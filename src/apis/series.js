@@ -18,10 +18,10 @@ export const updateSeries = (series) => {
 		headers: {
 			'Accept': 'application/json',
 			'Content-Type': 'application/json',
-			'Auth-Token': localStorage.getItem('authToken')
+			'Auth-Token': localStorage.getItem('authToken'),
 		},
 		mode: 'cors',
-		body: JSON.stringify(series)
+		body: JSON.stringify(series),
 	})
 		.then((res) => {
 			return res.json();

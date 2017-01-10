@@ -1,21 +1,21 @@
 import React from 'react';
-import { Link } from 'react-router'
+import { Link } from 'react-router';
 import LoginButtonContainer from '../../../containers/LoginButtonContainer/LoginButtonContainer.js';
 
 class HomeLayout extends React.Component {
 	static get propTypes() {
 		return {
-		}
+			children: React.PropTypes.object,
+		};
 	}
 	constructor(props) {
 		super(props);
 		this.state = {
-			children: React.PropTypes.array
 		};
 	}
 	componentDidMount() {
 	}
-	render () {
+	render() {
 		const style = require('./HomeLayout.scss');
 		return (
 			<div>

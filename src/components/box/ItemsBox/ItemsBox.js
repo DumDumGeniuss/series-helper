@@ -14,7 +14,9 @@ class ItemsBox extends React.Component {
 			item: React.PropTypes.object.isRequired,
 			children: React.PropTypes.array,
 			prewords: React.PropTypes.string,
+			childNumberPrewords: React.PropTypes.string,
 			order: React.PropTypes.number,
+			childNumber: React.PropTypes.number,
 			updateStatusFunc: React.PropTypes.func,
 			addItemFunc: React.PropTypes.func,
 			clickEditFunc: React.PropTypes.func,
@@ -22,7 +24,8 @@ class ItemsBox extends React.Component {
 			clickInputNumberFunc: React.PropTypes.func,
 			deleteSelfFunc: React.PropTypes.func,
 			editable: React.PropTypes.bool,
-		}
+			displayStyle: React.PropTypes.string,
+		};
 	}
 	constructor(props) {
 		super(props);
@@ -38,7 +41,7 @@ class ItemsBox extends React.Component {
 		let isItemChange = false;
 		let isPropsChange = false;
 		let isChildrenItemChange = false;
-		let isChildrenPropsChange =false;
+		let isChildrenPropsChange = false;
 		let isStateChange = false;
 
 		const [currentItem, nextItem] = [currentProps.item, nextProps.item];
@@ -63,7 +66,7 @@ class ItemsBox extends React.Component {
 				if (currentProps.children[i] && nextProps.children[i]) {
 					const [currentChildItem, nextChildItem] = [currentProps.children[i].props.item, nextProps.children[i].props.item];
 					if ((currentChildItem.link !== nextChildItem.link)
-						||(currentChildItem.title !== nextChildItem.title)) {
+						|| (currentChildItem.title !== nextChildItem.title)) {
 						isChildrenItemChange = true;
 					}
 				}
@@ -83,23 +86,23 @@ class ItemsBox extends React.Component {
 			|| isStateChange
 			|| isChildrenPropsChange
 			|| isChildrenItemChange;
-
-	}
-	componentWillReceiveProps(nextProps) {
 	}
 	componentDidUpdate() {
 	}
 	switchChildDisplay() {
 		this.setState({
-			showChild: !this.state.showChild
+			showChild: !this.state.showChild,
 		});
 	}
-	render () {
+	render() {
 		const style = require('./ItemsBox.scss');
-		const { item, children, prewords, order, updateStatusFunc, addItemFunc, clickEditFunc, deleteItemFunc, displayStyle, childNumber, childNumberPrewords, editable, clickInputNumberFunc, deleteSelfFunc } = this.props;
+		const { item, children, prewords, order,
+			updateStatusFunc, addItemFunc, clickEditFunc,
+			deleteItemFunc, displayStyle, childNumber, childNumberPrewords,
+			editable, clickInputNumberFunc, deleteSelfFunc } = this.props;
 		const { showChild } = this.state;
-		const title = item.title?item.title:(prewords + (order+1));
-		const link = item.link?item.link:null;
+		const title = item.title ? item.title : (prewords + (order + 1));
+		const link = item.link ? item.link : null;
 		let [signalColor, signalWord] = [];
 		switch (item.status) {
 		case 0:
@@ -122,30 +125,30 @@ class ItemsBox extends React.Component {
 				<div className={style.titleContainer}>
 					<span className={style.title}>{title || '沒有名稱'}</span>
 					<div className={style.rightItems}>
-						<span className={childNumber?style.number:style.invisible}><b>{childNumberPrewords}{childNumber}</b></span>
-						<div className={style.light + ' ' + signalColor} onClick={editable?updateStatusFunc:(function(){})}>{signalWord}</div>
+						<span className={childNumber ? style.number : style.invisible}><b>{childNumberPrewords}{childNumber}</b></span>
+						<div className={style.light + ' ' + signalColor} onClick={editable ? updateStatusFunc : () => {}}>{signalWord}</div>
 							<div>
-								<Trash 
-									className={(deleteSelfFunc&&editable)?style.functionIcon:style.invisible}
+								<Trash
+									className={(deleteSelfFunc && editable) ? style.functionIcon : style.invisible}
 									onClick={deleteSelfFunc}
 								/>
 							</div>
 							<div>
-								<Edit onClick={clickEditFunc} className={editable?style.functionIcon:style.invisible} />
+								<Edit onClick={clickEditFunc} className={editable ? style.functionIcon : style.invisible} />
 							</div>
-							<a style={ {'display': link?'initial':'none'} } href={link} target={"_blank"}>
+							<a style={ {'display': link ? 'initial' : 'none'} } href={link} target={"_blank"}>
 								<Film className={style.functionIcon} />
 							</a>
 							<div>
 								<MinusSquare
-									style={ {'display': showChild?'initial':'none'} }
+									style={ {'display': showChild ? 'initial' : 'none'} }
 									className={style.functionIcon}
 									onClick={this.switchChildDisplay.bind(this)}
 								/>
 							</div>
 							<div>
 								<PlusSquare
-									style={ {'display': showChild?'none':'initial'} }
+									style={ {'display': showChild ? 'none' : 'initial'} }
 									className={style.functionIcon}
 									onClick={this.switchChildDisplay.bind(this)}
 								/>
@@ -154,21 +157,21 @@ class ItemsBox extends React.Component {
 					</div>
 				</div>
 				<div className={style.content}>
-					<div className={showChild?style.leftBox:style.invisible}>
+					<div className={showChild ? style.leftBox : style.invisible}>
 						<Minus
-							className={editable?style.minusItemIcon:style.invisible}
+							className={editable ? style.minusItemIcon : style.invisible}
 							onClick={deleteItemFunc}
 						/>
 						<Plus
-							className={editable?style.addItemIcon:style.invisible}
+							className={editable ? style.addItemIcon : style.invisible}
 							onClick={addItemFunc}
 						/>
 						<Calculator
-							className={(editable&&clickInputNumberFunc)?style.minusItemIcon:style.invisible}
+							className={(editable && clickInputNumberFunc) ? style.minusItemIcon : style.invisible}
 							onClick={clickInputNumberFunc}
 						/>
 					</div>
-					<div className={showChild?style.childContainer:style.invisible}>
+					<div className={showChild ? style.childContainer : style.invisible}>
 						{children}
 					</div>
 				</div>

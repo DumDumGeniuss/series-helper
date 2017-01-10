@@ -5,9 +5,9 @@ import LogoBox from '../../box/LogoBox/LogoBox.js';
 class HomePage extends React.Component {
 	static get propTypes() {
 		return {
-		}
+		};
 	}
-	render () {
+	render() {
 		const style = require('./HomePage.scss');
 		const functionIndicator1 = require('./functionIndicator1.jpg');
 		const functionIndicator2 = require('./functionIndicator2.jpg');
