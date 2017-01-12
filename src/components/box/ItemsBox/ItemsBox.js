@@ -123,9 +123,11 @@ class ItemsBox extends React.Component {
 		return (
 			<div style={ {display: displayStyle} } className={style.box}>
 				<div className={style.titleContainer}>
-					<span className={style.title}>{title || '沒有名稱'}</span>
-					<div className={style.rightItems}>
+					<div className={style.leftItems}>
+						<span className={style.title}>{title || '沒有名稱'}</span>
 						<span className={childNumber ? style.number : style.invisible}><b>{childNumberPrewords}{childNumber}</b></span>
+					</div>
+					<div className={style.rightItems}>
 						<div className={style.light + ' ' + signalColor} onClick={editable ? updateStatusFunc : () => {}}>{signalWord}</div>
 							<div>
 								<Trash

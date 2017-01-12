@@ -22,11 +22,5 @@ export const updateSeries = (series) => {
 		},
 		mode: 'cors',
 		body: JSON.stringify(series),
-	})
-		.then((res) => {
-			return res.json();
-		})
-		.then((res) => {
-			return res;
-		});
+	});
 };

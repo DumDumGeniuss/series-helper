@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { connect } from 'react-redux';
+import { browserHistory } from 'react-router';
 // import { bindActionCreators } from 'redux';
 // import * as seriesActions from '../../actions/series.js';
 
@@ -215,11 +216,21 @@ class SeriesBoxContainer extends React.Component {
 		});
 		seriesApi.updateSeries(series)
 			.then((res) => {
+				if (res.status === 401) {
+					throw new Error('您的登入期限已經過期，或是您沒有權限操作此筆資料');
+				}
+				return res.json();
+			})
+			.then((res) => {
 				// res.items = JSON.parse(res.items);
 				self.setState({
 					series: res,
 					isSaving: false,
 				});
+			})
+			.catch((err) => {
+				alert(err.message);
+				browserHistory.push('/');
 			});
 	}
 	updateSeries(newSeries) {
@@ -434,7 +445,7 @@ class SeriesBoxContainer extends React.Component {
 										<ItemsBox
 											item={seriesItem}
 											prewords={null}
-											childNumberPrewords={'S'}
+											childNumberPrewords={'season '}
 											childNumber={seriesItem.items.length}
 											updateStatusFunc={self.updateSeriesStatus.bind(self, null, index)}
 											addItemFunc={self.addSeason.bind(self, index)}
@@ -451,7 +462,7 @@ class SeriesBoxContainer extends React.Component {
 															key={seriesItem._id + seasonIndex}
 															item={seasonItem}
 															prewords={null}
-															childNumberPrewords={'EP'}
+															childNumberPrewords={'ep '}
 															childNumber={seasonItem.episodeNumber}
 															updateStatusFunc={self.updateSeasonStatus.bind(self, null, index, seasonIndex)}
 															addItemFunc={self.addEp.bind(self, index, seasonIndex)}
