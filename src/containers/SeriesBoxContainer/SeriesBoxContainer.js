@@ -445,7 +445,7 @@ class SeriesBoxContainer extends React.Component {
 										<ItemsBox
 											item={seriesItem}
 											prewords={null}
-											childNumberPrewords={'season '}
+											childNumberPrewords={'season'}
 											childNumber={seriesItem.items.length}
 											updateStatusFunc={self.updateSeriesStatus.bind(self, null, index)}
 											addItemFunc={self.addSeason.bind(self, index)}

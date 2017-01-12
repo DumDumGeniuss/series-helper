@@ -9,6 +9,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	// flex-direction:column;
 	background-color: #e8f6ff;
 	margin: 0px 0px 0px 0px;
 	padding: 4px 10px;
@@ -29,25 +30,18 @@
 		}
 		.number {
 			display: inline-block;
-			padding: 3px;
+			padding: 4px;
 			margin-left: 3px;
-			border: 1px solid #024e80;
+			// border: 1px solid #f35e5e;
 			border-radius: 5px;
 			background-image: linear-gradient(#fe9093, #f35e5e);
 			font-size: 1.5em;
 			color: white;
 		}
-	}
-
-	.rightItems {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		
 		.light {
 			display: inline-block;
 			margin: 0px 5px;
-			padding: 5px;
+			padding: 4px;
 			border-radius: 5px;
 			font-size: 1.5em;
 			color: white;
@@ -71,6 +65,12 @@
 		.green {
 			background-image: linear-gradient(#8bc34a, #009688);
 		}
+	}
+
+	.rightItems {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 	
 		.functionIcon {
 			font-size: 3em;

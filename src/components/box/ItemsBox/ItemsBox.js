@@ -126,36 +126,35 @@ class ItemsBox extends React.Component {
 					<div className={style.leftItems}>
 						<span className={style.title}>{title || '沒有名稱'}</span>
 						<span className={childNumber ? style.number : style.invisible}><b>{childNumberPrewords}{childNumber}</b></span>
+						<div className={style.light + ' ' + signalColor} onClick={editable ? updateStatusFunc : () => {}}>{signalWord}</div>
 					</div>
 					<div className={style.rightItems}>
-						<div className={style.light + ' ' + signalColor} onClick={editable ? updateStatusFunc : () => {}}>{signalWord}</div>
-							<div>
-								<Trash
-									className={(deleteSelfFunc && editable) ? style.functionIcon : style.invisible}
-									onClick={deleteSelfFunc}
-								/>
-							</div>
-							<div>
-								<Edit onClick={clickEditFunc} className={editable ? style.functionIcon : style.invisible} />
-							</div>
-							<a style={ {'display': link ? 'initial' : 'none'} } href={link} target={"_blank"}>
-								<Film className={style.functionIcon} />
-							</a>
-							<div>
-								<MinusSquare
-									style={ {'display': showChild ? 'initial' : 'none'} }
-									className={style.functionIcon}
-									onClick={this.switchChildDisplay.bind(this)}
-								/>
-							</div>
-							<div>
-								<PlusSquare
-									style={ {'display': showChild ? 'none' : 'initial'} }
-									className={style.functionIcon}
-									onClick={this.switchChildDisplay.bind(this)}
-								/>
-							</div>
-
+						<div>
+							<Trash
+								className={(deleteSelfFunc && editable) ? style.functionIcon : style.invisible}
+								onClick={deleteSelfFunc}
+							/>
+						</div>
+						<div>
+							<Edit onClick={clickEditFunc} className={editable ? style.functionIcon : style.invisible} />
+						</div>
+						<a style={ {'display': link ? 'initial' : 'none'} } href={link} target={"_blank"}>
+							<Film className={style.functionIcon} />
+						</a>
+						<div>
+							<MinusSquare
+								style={ {'display': showChild ? 'initial' : 'none'} }
+								className={style.functionIcon}
+								onClick={this.switchChildDisplay.bind(this)}
+							/>
+						</div>
+						<div>
+							<PlusSquare
+								style={ {'display': showChild ? 'none' : 'initial'} }
+								className={style.functionIcon}
+								onClick={this.switchChildDisplay.bind(this)}
+							/>
+						</div>
 					</div>
 				</div>
 				<div className={style.content}>
