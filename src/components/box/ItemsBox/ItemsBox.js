@@ -1,6 +1,6 @@
 import React from 'react';
-import MinusSquare from 'react-icons/lib/fa/minus-square';
-import PlusSquare from 'react-icons/lib/fa/plus-square';
+import ChevronCircleDown from 'react-icons/lib/fa/chevron-circle-down';
+import ChevronCircleUp from 'react-icons/lib/fa/chevron-circle-up';
 import Minus from 'react-icons/lib/fa/minus';
 import Plus from 'react-icons/lib/fa/plus';
 import Film from 'react-icons/lib/fa/film';
@@ -35,58 +35,58 @@ class ItemsBox extends React.Component {
 	}
 	/* I do the whole shouldComponentUpdate judge by myself, because the data we pass into this component
 	are not as usual, so it's inevitible. */
-	shouldComponentUpdate(nextProps, nextState) {
-		const currentProps = this.props;
-		const currentState = this.state;
-		let isItemChange = false;
-		let isPropsChange = false;
-		let isChildrenItemChange = false;
-		let isChildrenPropsChange = false;
-		let isStateChange = false;
+	// shouldComponentUpdate(nextProps, nextState) {
+	// 	const currentProps = this.props;
+	// 	const currentState = this.state;
+	// 	let isItemChange = false;
+	// 	let isPropsChange = false;
+	// 	let isChildrenItemChange = false;
+	// 	let isChildrenPropsChange = false;
+	// 	let isStateChange = false;
 
-		const [currentItem, nextItem] = [currentProps.item, nextProps.item];
-		if ((currentItem.status !== nextItem.status)
-			|| (currentItem.link !== nextItem.link)
-			|| (currentItem.title !== nextItem.title)
-			|| (currentItem.episodeNumber !== nextItem.episodeNumber)) {
-			isItemChange = true;
-		}
+	// 	const [currentItem, nextItem] = [currentProps.item, nextProps.item];
+	// 	if ((currentItem.status !== nextItem.status)
+	// 		|| (currentItem.link !== nextItem.link)
+	// 		|| (currentItem.title !== nextItem.title)
+	// 		|| (currentItem.episodeNumber !== nextItem.episodeNumber)) {
+	// 		isItemChange = true;
+	// 	}
 
-		if ((currentProps.editable !== nextProps.editable)
-			|| ((currentProps.children !== undefined) && (currentProps.children.length !== nextProps.children.length))) {
-			isPropsChange = true;
-		}
+	// 	if ((currentProps.editable !== nextProps.editable)
+	// 		|| ((currentProps.children !== undefined) && (currentProps.children.length !== nextProps.children.length))) {
+	// 		isPropsChange = true;
+	// 	}
 
-		if ((currentState.showChild !== nextState.showChild)) {
-			isStateChange = true;
-		}
+	// 	if ((currentState.showChild !== nextState.showChild)) {
+	// 		isStateChange = true;
+	// 	}
 
-		if (currentProps.children) {
-			for (let i = 0; i < currentProps.children.length; i++) {
-				if (currentProps.children[i] && nextProps.children[i]) {
-					const [currentChildItem, nextChildItem] = [currentProps.children[i].props.item, nextProps.children[i].props.item];
-					if ((currentChildItem.link !== nextChildItem.link)
-						|| (currentChildItem.title !== nextChildItem.title)) {
-						isChildrenItemChange = true;
-					}
-				}
-			}
-		}
-		if (currentProps.children) {
-			for (let i = 0; i < currentProps.children.length; i++) {
-				if (currentProps.children[i] && nextProps.children[i]) {
-					if (currentProps.children[i].props.childNumber !== nextProps.children[i].props.childNumber) {
-						isChildrenPropsChange = true;
-					}
-				}
-			}
-		}
-		return isItemChange
-			|| isPropsChange
-			|| isStateChange
-			|| isChildrenPropsChange
-			|| isChildrenItemChange;
-	}
+	// 	if (currentProps.children) {
+	// 		for (let i = 0; i < currentProps.children.length; i++) {
+	// 			if (currentProps.children[i] && nextProps.children[i]) {
+	// 				const [currentChildItem, nextChildItem] = [currentProps.children[i].props.item, nextProps.children[i].props.item];
+	// 				if ((currentChildItem.link !== nextChildItem.link)
+	// 					|| (currentChildItem.title !== nextChildItem.title)) {
+	// 					isChildrenItemChange = true;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	if (currentProps.children) {
+	// 		for (let i = 0; i < currentProps.children.length; i++) {
+	// 			if (currentProps.children[i] && nextProps.children[i]) {
+	// 				if (currentProps.children[i].props.childNumber !== nextProps.children[i].props.childNumber) {
+	// 					isChildrenPropsChange = true;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	return isItemChange
+	// 		|| isPropsChange
+	// 		|| isStateChange
+	// 		|| isChildrenPropsChange
+	// 		|| isChildrenItemChange;
+	// }
 	componentDidUpdate() {
 	}
 	switchChildDisplay() {
@@ -142,14 +142,14 @@ class ItemsBox extends React.Component {
 							<Film className={style.functionIcon} />
 						</a>
 						<div>
-							<MinusSquare
+							<ChevronCircleUp
 								style={ {'display': showChild ? 'initial' : 'none'} }
 								className={style.functionIcon}
 								onClick={this.switchChildDisplay.bind(this)}
 							/>
 						</div>
 						<div>
-							<PlusSquare
+							<ChevronCircleDown
 								style={ {'display': showChild ? 'none' : 'initial'} }
 								className={style.functionIcon}
 								onClick={this.switchChildDisplay.bind(this)}
