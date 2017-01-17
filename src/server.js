@@ -7,7 +7,8 @@ import favicon from 'serve-favicon';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import webpack from 'webpack';
-import webpackConfig from '../tools/webpack.dev.config.js';
+/* ../tools/webpack.dev.config.js is writen in ES5, I have no choice to use it */
+const webpackConfig = require('../tools/webpack.dev.config.js');
 import WebpackIsomorphicTools from 'webpack-isomorphic-tools';
 
 import createLocation from 'history/lib/createLocation';
@@ -29,6 +30,7 @@ dotenv.config();
 const rootDir = path.resolve(__dirname, '..');
 
 global.webpackIsomorphicTools = new WebpackIsomorphicTools(require('../tools/webpack-isomorphic-tools.js'))
+	// .development(process.env.NODE_ENV === 'development')
 	.server(rootDir, () => {
 		require('./server.js');
 	});

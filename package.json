@@ -11,7 +11,7 @@
   },
   "betterScripts": {
     "eslint": {
-      "command": "eslint src; exit 0"
+      "command": "eslint src;"
     },
     "start:dev": {
       "command": "webpack --config tools/webpack.dev.config.js && babel-node src/server.js",
